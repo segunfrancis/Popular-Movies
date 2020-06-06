@@ -1,7 +1,7 @@
-
 package com.project.segunfrancis.popularmovies.model;
 
 import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
@@ -16,15 +16,7 @@ public class TrailerResponse {
         return mId;
     }
 
-    public void setId(Long id) {
-        mId = id;
-    }
-
     public List<Movie> getResults() {
         return mResults;
-    }
-
-    public void setResults(List<Movie> results) {
-        mResults = results;
     }
 }

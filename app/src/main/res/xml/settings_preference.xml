@@ -4,9 +4,10 @@
 
     <ListPreference
         android:entries="@array/sort_order"
-        android:entryValues="@array/sort_order"
+        android:entryValues="@array/sort_order_values"
         android:key="list_preference"
         android:title="@string/preference_title"
+        app:defaultValue="0"
         app:icon="@drawable/ic_sort_24dp"
         app:useSimpleSummaryProvider="true" />
 </PreferenceScreen>

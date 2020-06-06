@@ -10,6 +10,7 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <!-- Snackbar custom style -->
     <style name="CustomSnackBarStyle" parent="Widget.Design.Snackbar" />
 
 </resources>

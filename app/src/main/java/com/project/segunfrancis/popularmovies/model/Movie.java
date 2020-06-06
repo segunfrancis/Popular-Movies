@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
@@ -76,24 +77,12 @@ public class Movie implements Parcelable {
         return mAdult;
     }
 
-    public void setAdult(Boolean adult) {
-        mAdult = adult;
-    }
-
     public String getBackdropPath() {
         return mBackdropPath;
     }
 
-    public void setBackdropPath(String backdropPath) {
-        mBackdropPath = backdropPath;
-    }
-
     public List<Integer> getGenreIds() {
         return mGenreIds;
-    }
-
-    public void setGenreIds(List<Integer> genreIds) {
-        mGenreIds = genreIds;
     }
 
     public int getId() {
@@ -108,10 +97,6 @@ public class Movie implements Parcelable {
         return mOriginalLanguage;
     }
 
-    public void setOriginalLanguage(String originalLanguage) {
-        mOriginalLanguage = originalLanguage;
-    }
-
     public String getOriginalTitle() {
         return mOriginalTitle;
     }
@@ -124,64 +109,32 @@ public class Movie implements Parcelable {
         return mOverview;
     }
 
-    public void setOverview(String overview) {
-        mOverview = overview;
-    }
-
     public Double getPopularity() {
         return mPopularity;
-    }
-
-    public void setPopularity(Double popularity) {
-        mPopularity = popularity;
     }
 
     public String getPosterPath() {
         return mPosterPath;
     }
 
-    public void setPosterPath(String posterPath) {
-        mPosterPath = posterPath;
-    }
-
     public String getReleaseDate() {
         return mReleaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        mReleaseDate = releaseDate;
     }
 
     public String getTitle() {
         return mTitle;
     }
 
-    public void setTitle(String title) {
-        mTitle = title;
-    }
-
     public Boolean getVideo() {
         return mVideo;
-    }
-
-    public void setVideo(Boolean video) {
-        mVideo = video;
     }
 
     public double getVoteAverage() {
         return mVoteAverage;
     }
 
-    public void setVoteAverage(double voteAverage) {
-        mVoteAverage = voteAverage;
-    }
-
     public int getVoteCount() {
         return mVoteCount;
-    }
-
-    public void setVoteCount(int voteCount) {
-        mVoteCount = voteCount;
     }
 
     @Override

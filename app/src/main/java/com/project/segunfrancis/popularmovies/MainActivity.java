@@ -60,8 +60,9 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
 
         // Get preference value
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mListPrefValue = mPreferences.getString(KEY_PREF_LIST, "");
-        displaySnackBar("You are viewing " + mListPrefValue);
+        mListPrefValue = mPreferences.getString(KEY_PREF_LIST, "0");
+        String[] pref = getResources().getStringArray(R.array.sort_order);
+        displaySnackBar("You are viewing " + pref[Integer.parseInt(mListPrefValue)]);
 
         retryButton.setOnClickListener(v -> {
             if (isConnectionAvailable()) {
@@ -82,11 +83,12 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     @Override
     protected void onResume() {
         super.onResume();
-        String listPrefValue = mPreferences.getString(KEY_PREF_LIST, "");
-        if (!mListPrefValue.equals(listPrefValue)) {
+        String listPrefValue = mPreferences.getString(KEY_PREF_LIST, "0");
+        if (!(mListPrefValue.equals(listPrefValue))) {
             // Preferences has changed, reload data
-            displaySnackBar("You are viewing " + listPrefValue);
-            mListPrefValue = mPreferences.getString(KEY_PREF_LIST, "");
+            String[] pref = getResources().getStringArray(R.array.sort_order);
+            displaySnackBar("You are viewing " + pref[Integer.parseInt(listPrefValue)]);
+            mListPrefValue = mPreferences.getString(KEY_PREF_LIST, "0");
             loadMovies();
         }
     }
@@ -190,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     }
 
     private void loadMovies() {
-        String[] values = getResources().getStringArray(R.array.sort_order);
+        String[] values = getResources().getStringArray(R.array.sort_order_values);
         if (mListPrefValue.equals(values[0])) {
             // Popular movies
             loadPopularMovies();
