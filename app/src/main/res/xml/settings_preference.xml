@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
-        android:defaultValue="Def"
         android:entries="@array/sort_order"
         android:entryValues="@array/sort_order"
         android:key="list_preference"
-        android:title="Sort Movies"
-        app:summary="Popular Movies" />
+        android:title="@string/preference_title"
+        app:icon="@drawable/ic_sort_24dp"
+        app:useSimpleSummaryProvider="true" />
 </PreferenceScreen>
