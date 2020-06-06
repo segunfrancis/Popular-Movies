@@ -115,7 +115,8 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
             @Override
             public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
                 displaySnackBar(t.getLocalizedMessage());
-                hideDisplays();
+                mNoInternetGroup.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -142,7 +143,8 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
             @Override
             public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
                 displaySnackBar(t.getLocalizedMessage());
-                hideDisplays();
+                mNoInternetGroup.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.GONE);
             }
         });
     }
