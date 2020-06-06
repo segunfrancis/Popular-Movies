@@ -10,7 +10,7 @@ public class TrailerResponse {
     @SerializedName("id")
     private Long mId;
     @SerializedName("results")
-    private List<Result> mResults;
+    private List<Movie> mResults;
 
     public Long getId() {
         return mId;
@@ -20,11 +20,11 @@ public class TrailerResponse {
         mId = id;
     }
 
-    public List<Result> getResults() {
+    public List<Movie> getResults() {
         return mResults;
     }
 
-    public void setResults(List<Result> results) {
+    public void setResults(List<Movie> results) {
         mResults = results;
     }
 }

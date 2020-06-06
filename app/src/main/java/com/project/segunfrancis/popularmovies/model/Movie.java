@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
-public class Result implements Parcelable {
+public class Movie implements Parcelable {
 
     @SerializedName("adult")
     private Boolean mAdult;
@@ -38,7 +38,7 @@ public class Result implements Parcelable {
     @SerializedName("vote_count")
     private int mVoteCount;
 
-    protected Result(Parcel in) {
+    protected Movie(Parcel in) {
         byte tmpMAdult = in.readByte();
         mAdult = tmpMAdult == 0 ? null : tmpMAdult == 1;
         mBackdropPath = in.readString();
@@ -60,15 +60,15 @@ public class Result implements Parcelable {
         mVoteCount = in.readInt();
     }
 
-    public static final Creator<Result> CREATOR = new Creator<Result>() {
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
         @Override
-        public Result createFromParcel(Parcel in) {
-            return new Result(in);
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
         }
 
         @Override
-        public Result[] newArray(int size) {
-            return new Result[size];
+        public Movie[] newArray(int size) {
+            return new Movie[size];
         }
     };
 

@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.project.segunfrancis.popularmovies.R;
-import com.project.segunfrancis.popularmovies.model.Result;
+import com.project.segunfrancis.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -22,10 +22,10 @@ import static com.project.segunfrancis.popularmovies.util.AppConstants.POSTER_BA
 public class MoviePosterAdapter extends
         RecyclerView.Adapter<MoviePosterAdapter.ViewHolder> {
 
-    private List<Result> moviesList;
+    private List<Movie> moviesList;
     private OnItemClickListener onItemClickListener;
 
-    public MoviePosterAdapter(List<Result> moviesList, OnItemClickListener onItemClickListener) {
+    public MoviePosterAdapter(List<Movie> moviesList, OnItemClickListener onItemClickListener) {
         this.moviesList = moviesList;
         this.onItemClickListener = onItemClickListener;
     }
@@ -36,7 +36,7 @@ public class MoviePosterAdapter extends
             super(itemView);
         }
 
-        void bind(final Result result, final OnItemClickListener listener) {
+        void bind(final Movie result, final OnItemClickListener listener) {
             ImageView posterImage = itemView.findViewById(R.id.posterImageView);
             String posterPath = POSTER_BASE_URL + result.getPosterPath();
             Picasso.get()
@@ -58,7 +58,7 @@ public class MoviePosterAdapter extends
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Result item = moviesList.get(position);
+        Movie item = moviesList.get(position);
         holder.bind(item, onItemClickListener);
     }
 
@@ -68,6 +68,6 @@ public class MoviePosterAdapter extends
     }
 
     public interface OnItemClickListener {
-        void onItemClick(Result result, int position);
+        void onItemClick(Movie result, int position);
     }
 }

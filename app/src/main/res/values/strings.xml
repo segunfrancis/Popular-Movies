@@ -3,4 +3,9 @@
     <string name="poster_image_description">movie poster</string>
     <string name="no_internet">image displaying no internet</string>
     <string name="retry">Retry</string>
+    <string name="backdrop_image_description">movie backdrop image</string>
+    <string name="movie_title">Title:</string>
+    <string name="movie_plot_synopsis">Plot Synopsis:</string>
+    <string name="movie_release_date">Release Date:</string>
+    <string name="movie_vote_average">Vote Average:</string>
 </resources>

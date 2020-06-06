@@ -10,7 +10,7 @@ public class MoviesResponse {
     @SerializedName("page")
     private int mPage;
     @SerializedName("results")
-    private List<Result> mResults;
+    private List<Movie> mResults;
     @SerializedName("total_pages")
     private int mTotalPages;
     @SerializedName("total_results")
@@ -24,11 +24,11 @@ public class MoviesResponse {
         mPage = page;
     }
 
-    public List<Result> getResults() {
+    public List<Movie> getResults() {
         return mResults;
     }
 
-    public void setResults(List<Result> results) {
+    public void setResults(List<Movie> results) {
         mResults = results;
     }
 

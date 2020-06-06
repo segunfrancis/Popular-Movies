@@ -20,7 +20,7 @@ import com.project.segunfrancis.popularmovies.adapter.MoviePosterAdapter;
 import com.project.segunfrancis.popularmovies.api.ApiService;
 import com.project.segunfrancis.popularmovies.api.RetrofitClient;
 import com.project.segunfrancis.popularmovies.model.MoviesResponse;
-import com.project.segunfrancis.popularmovies.model.Result;
+import com.project.segunfrancis.popularmovies.model.Movie;
 
 import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KEY;
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
-    private List<Result> moviesList;
+    private List<Movie> moviesList;
     private MoviePosterAdapter mAdapter;
     private GridLayoutManager mLayoutManager;
     private Group mNoInternetGroup;
@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         mRecyclerView = findViewById(R.id.movies_listRecyclerVIew);
         mNoInternetGroup = findViewById(R.id.no_internet_group);
         TextView retryButton = findViewById(R.id.retry);
-        moviesList = new ArrayList<>();
         mLayoutManager = new GridLayoutManager(this, 2);
         mProgressBar.setVisibility(View.VISIBLE);
         retryButton.setOnClickListener(v -> {
@@ -77,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         call.enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
+                moviesList = new ArrayList<>();
                 moviesList = response.body().getResults();
                 mAdapter = new MoviePosterAdapter(moviesList, MainActivity.this);
                 mRecyclerView.setAdapter(mAdapter);
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     }
 
     @Override
-    public void onItemClick(Result result, int position) {
+    public void onItemClick(Movie result, int position) {
         startActivity(
                 new Intent(MainActivity.this, MovieDetailsActivity.class)
                         .putExtra(INTENT_KEY, result)
