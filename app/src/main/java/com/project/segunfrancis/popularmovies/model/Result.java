@@ -1,88 +1,241 @@
+
 package com.project.segunfrancis.popularmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
-public class Result {
+public class Result implements Parcelable {
 
+    @SerializedName("adult")
+    private Boolean mAdult;
+    @SerializedName("backdrop_path")
+    private String mBackdropPath;
+    @SerializedName("genre_ids")
+    private List<Long> mGenreIds;
     @SerializedName("id")
-    private String mId;
-    @SerializedName("iso_3166_1")
-    private String mIso31661;
-    @SerializedName("iso_639_1")
-    private String mIso6391;
-    @SerializedName("key")
-    private String mKey;
-    @SerializedName("name")
-    private String mName;
-    @SerializedName("site")
-    private String mSite;
-    @SerializedName("size")
-    private Long mSize;
-    @SerializedName("type")
-    private String mType;
+    private Long mId;
+    @SerializedName("original_language")
+    private String mOriginalLanguage;
+    @SerializedName("original_title")
+    private String mOriginalTitle;
+    @SerializedName("overview")
+    private String mOverview;
+    @SerializedName("popularity")
+    private Double mPopularity;
+    @SerializedName("poster_path")
+    private String mPosterPath;
+    @SerializedName("release_date")
+    private String mReleaseDate;
+    @SerializedName("title")
+    private String mTitle;
+    @SerializedName("video")
+    private Boolean mVideo;
+    @SerializedName("vote_average")
+    private Long mVoteAverage;
+    @SerializedName("vote_count")
+    private Long mVoteCount;
 
-    public String getId() {
+    protected Result(Parcel in) {
+        byte tmpMAdult = in.readByte();
+        mAdult = tmpMAdult == 0 ? null : tmpMAdult == 1;
+        mBackdropPath = in.readString();
+        if (in.readByte() == 0) {
+            mId = null;
+        } else {
+            mId = in.readLong();
+        }
+        mOriginalLanguage = in.readString();
+        mOriginalTitle = in.readString();
+        mOverview = in.readString();
+        if (in.readByte() == 0) {
+            mPopularity = null;
+        } else {
+            mPopularity = in.readDouble();
+        }
+        mPosterPath = in.readString();
+        mReleaseDate = in.readString();
+        mTitle = in.readString();
+        byte tmpMVideo = in.readByte();
+        mVideo = tmpMVideo == 0 ? null : tmpMVideo == 1;
+        if (in.readByte() == 0) {
+            mVoteAverage = null;
+        } else {
+            mVoteAverage = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            mVoteCount = null;
+        } else {
+            mVoteCount = in.readLong();
+        }
+    }
+
+    public static final Creator<Result> CREATOR = new Creator<Result>() {
+        @Override
+        public Result createFromParcel(Parcel in) {
+            return new Result(in);
+        }
+
+        @Override
+        public Result[] newArray(int size) {
+            return new Result[size];
+        }
+    };
+
+    public Boolean getAdult() {
+        return mAdult;
+    }
+
+    public void setAdult(Boolean adult) {
+        mAdult = adult;
+    }
+
+    public String getBackdropPath() {
+        return mBackdropPath;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        mBackdropPath = backdropPath;
+    }
+
+    public List<Long> getGenreIds() {
+        return mGenreIds;
+    }
+
+    public void setGenreIds(List<Long> genreIds) {
+        mGenreIds = genreIds;
+    }
+
+    public Long getId() {
         return mId;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         mId = id;
     }
 
-    public String getIso31661() {
-        return mIso31661;
+    public String getOriginalLanguage() {
+        return mOriginalLanguage;
     }
 
-    public void setIso31661(String iso31661) {
-        mIso31661 = iso31661;
+    public void setOriginalLanguage(String originalLanguage) {
+        mOriginalLanguage = originalLanguage;
     }
 
-    public String getIso6391() {
-        return mIso6391;
+    public String getOriginalTitle() {
+        return mOriginalTitle;
     }
 
-    public void setIso6391(String iso6391) {
-        mIso6391 = iso6391;
+    public void setOriginalTitle(String originalTitle) {
+        mOriginalTitle = originalTitle;
     }
 
-    public String getKey() {
-        return mKey;
+    public String getOverview() {
+        return mOverview;
     }
 
-    public void setKey(String key) {
-        mKey = key;
+    public void setOverview(String overview) {
+        mOverview = overview;
     }
 
-    public String getName() {
-        return mName;
+    public Double getPopularity() {
+        return mPopularity;
     }
 
-    public void setName(String name) {
-        mName = name;
+    public void setPopularity(Double popularity) {
+        mPopularity = popularity;
     }
 
-    public String getSite() {
-        return mSite;
+    public String getPosterPath() {
+        return mPosterPath;
     }
 
-    public void setSite(String site) {
-        mSite = site;
+    public void setPosterPath(String posterPath) {
+        mPosterPath = posterPath;
     }
 
-    public Long getSize() {
-        return mSize;
+    public String getReleaseDate() {
+        return mReleaseDate;
     }
 
-    public void setSize(Long size) {
-        mSize = size;
+    public void setReleaseDate(String releaseDate) {
+        mReleaseDate = releaseDate;
     }
 
-    public String getType() {
-        return mType;
+    public String getTitle() {
+        return mTitle;
     }
 
-    public void setType(String type) {
-        mType = type;
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public Boolean getVideo() {
+        return mVideo;
+    }
+
+    public void setVideo(Boolean video) {
+        mVideo = video;
+    }
+
+    public Long getVoteAverage() {
+        return mVoteAverage;
+    }
+
+    public void setVoteAverage(Long voteAverage) {
+        mVoteAverage = voteAverage;
+    }
+
+    public Long getVoteCount() {
+        return mVoteCount;
+    }
+
+    public void setVoteCount(Long voteCount) {
+        mVoteCount = voteCount;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeByte((byte) (mAdult == null ? 0 : mAdult ? 1 : 2));
+        parcel.writeString(mBackdropPath);
+        if (mId == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(mId);
+        }
+        parcel.writeString(mOriginalLanguage);
+        parcel.writeString(mOriginalTitle);
+        parcel.writeString(mOverview);
+        if (mPopularity == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(mPopularity);
+        }
+        parcel.writeString(mPosterPath);
+        parcel.writeString(mReleaseDate);
+        parcel.writeString(mTitle);
+        parcel.writeByte((byte) (mVideo == null ? 0 : mVideo ? 1 : 2));
+        if (mVoteAverage == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(mVoteAverage);
+        }
+        if (mVoteCount == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(mVoteCount);
+        }
     }
 }
