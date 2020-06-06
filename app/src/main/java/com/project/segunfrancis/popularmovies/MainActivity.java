@@ -1,5 +1,6 @@
 package com.project.segunfrancis.popularmovies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -10,6 +11,8 @@ import retrofit2.Response;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         Call<MoviesResponse> call = service.getPopularMovies(API_KEY);
         call.enqueue(new Callback<MoviesResponse>() {
             @Override
-            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
+            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
                 moviesList = new ArrayList<>();
                 moviesList = response.body().getResults();
                 mAdapter = new MoviePosterAdapter(moviesList, MainActivity.this);
@@ -85,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
             }
 
             @Override
-            public void onFailure(Call<MoviesResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
                 displaySnackBar(t.getLocalizedMessage());
                 hideDisplays();
             }
@@ -100,6 +103,21 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         );
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void displaySnackBar(String message) {
         Snackbar.make(findViewById(R.id.movies_list_constraintLayout), message, Snackbar.LENGTH_LONG).show();
     }
@@ -107,11 +125,6 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     private void hideDisplays() {
         mNoInternetGroup.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
-    }
-
-    private void showDisplays() {
-        mNoInternetGroup.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     private boolean isConnectionAvailable() {

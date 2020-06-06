@@ -1,11 +1,27 @@
 <resources>
+    <array name="sort_order">
+        <item>Popular Movies</item>
+        <item>Highest Rated Movies</item>
+    </array>
     <string name="app_name">Popular Movies</string>
-    <string name="poster_image_description">movie poster</string>
-    <string name="no_internet">image displaying no internet</string>
     <string name="retry">Retry</string>
-    <string name="backdrop_image_description">movie backdrop image</string>
     <string name="movie_title">Title:</string>
     <string name="movie_plot_synopsis">Plot Synopsis:</string>
     <string name="movie_release_date">Release Date:</string>
     <string name="movie_vote_average">Vote Average:</string>
+
+    <!-- Preferences -->
+    <string name="settings_activity_label">Settings</string>
+    <string name="no_internet">image displaying no internet</string>
+
+    <!-- Image Descriptions -->
+    <string name="backdrop_image_description">movie backdrop image</string>
+    <string name="poster_image_description">movie poster</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="sort">
+        <item>Popular Movies</item>
+        <item>Highest Rated Movies</item>
+    </string-array>
 </resources>
