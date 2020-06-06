@@ -1,4 +1,3 @@
-
 package com.project.segunfrancis.popularmovies.model;
 
 import android.os.Parcel;
@@ -15,9 +14,9 @@ public class Result implements Parcelable {
     @SerializedName("backdrop_path")
     private String mBackdropPath;
     @SerializedName("genre_ids")
-    private List<Long> mGenreIds;
+    private List<Integer> mGenreIds;
     @SerializedName("id")
-    private Long mId;
+    private int mId;
     @SerializedName("original_language")
     private String mOriginalLanguage;
     @SerializedName("original_title")
@@ -25,7 +24,7 @@ public class Result implements Parcelable {
     @SerializedName("overview")
     private String mOverview;
     @SerializedName("popularity")
-    private Double mPopularity;
+    private double mPopularity;
     @SerializedName("poster_path")
     private String mPosterPath;
     @SerializedName("release_date")
@@ -35,27 +34,19 @@ public class Result implements Parcelable {
     @SerializedName("video")
     private Boolean mVideo;
     @SerializedName("vote_average")
-    private Long mVoteAverage;
+    private Double mVoteAverage;
     @SerializedName("vote_count")
-    private Long mVoteCount;
+    private int mVoteCount;
 
     protected Result(Parcel in) {
         byte tmpMAdult = in.readByte();
         mAdult = tmpMAdult == 0 ? null : tmpMAdult == 1;
         mBackdropPath = in.readString();
-        if (in.readByte() == 0) {
-            mId = null;
-        } else {
-            mId = in.readLong();
-        }
+        mId = in.readInt();
         mOriginalLanguage = in.readString();
         mOriginalTitle = in.readString();
         mOverview = in.readString();
-        if (in.readByte() == 0) {
-            mPopularity = null;
-        } else {
-            mPopularity = in.readDouble();
-        }
+        mPopularity = in.readDouble();
         mPosterPath = in.readString();
         mReleaseDate = in.readString();
         mTitle = in.readString();
@@ -64,13 +55,9 @@ public class Result implements Parcelable {
         if (in.readByte() == 0) {
             mVoteAverage = null;
         } else {
-            mVoteAverage = in.readLong();
+            mVoteAverage = in.readDouble();
         }
-        if (in.readByte() == 0) {
-            mVoteCount = null;
-        } else {
-            mVoteCount = in.readLong();
-        }
+        mVoteCount = in.readInt();
     }
 
     public static final Creator<Result> CREATOR = new Creator<Result>() {
@@ -101,19 +88,19 @@ public class Result implements Parcelable {
         mBackdropPath = backdropPath;
     }
 
-    public List<Long> getGenreIds() {
+    public List<Integer> getGenreIds() {
         return mGenreIds;
     }
 
-    public void setGenreIds(List<Long> genreIds) {
+    public void setGenreIds(List<Integer> genreIds) {
         mGenreIds = genreIds;
     }
 
-    public Long getId() {
+    public int getId() {
         return mId;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         mId = id;
     }
 
@@ -181,19 +168,19 @@ public class Result implements Parcelable {
         mVideo = video;
     }
 
-    public Long getVoteAverage() {
+    public double getVoteAverage() {
         return mVoteAverage;
     }
 
-    public void setVoteAverage(Long voteAverage) {
+    public void setVoteAverage(double voteAverage) {
         mVoteAverage = voteAverage;
     }
 
-    public Long getVoteCount() {
+    public int getVoteCount() {
         return mVoteCount;
     }
 
-    public void setVoteCount(Long voteCount) {
+    public void setVoteCount(int voteCount) {
         mVoteCount = voteCount;
     }
 
@@ -206,21 +193,11 @@ public class Result implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeByte((byte) (mAdult == null ? 0 : mAdult ? 1 : 2));
         parcel.writeString(mBackdropPath);
-        if (mId == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(mId);
-        }
+        parcel.writeInt(mId);
         parcel.writeString(mOriginalLanguage);
         parcel.writeString(mOriginalTitle);
         parcel.writeString(mOverview);
-        if (mPopularity == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeDouble(mPopularity);
-        }
+        parcel.writeDouble(mPopularity);
         parcel.writeString(mPosterPath);
         parcel.writeString(mReleaseDate);
         parcel.writeString(mTitle);
@@ -229,13 +206,8 @@ public class Result implements Parcelable {
             parcel.writeByte((byte) 0);
         } else {
             parcel.writeByte((byte) 1);
-            parcel.writeLong(mVoteAverage);
+            parcel.writeDouble(mVoteAverage);
         }
-        if (mVoteCount == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(mVoteCount);
-        }
+        parcel.writeInt(mVoteCount);
     }
 }

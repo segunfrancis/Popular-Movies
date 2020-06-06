@@ -8,19 +8,19 @@ import com.google.gson.annotations.SerializedName;
 public class MoviesResponse {
 
     @SerializedName("page")
-    private Long mPage;
+    private int mPage;
     @SerializedName("results")
     private List<Result> mResults;
     @SerializedName("total_pages")
-    private Long mTotalPages;
+    private int mTotalPages;
     @SerializedName("total_results")
-    private Long mTotalResults;
+    private int mTotalResults;
 
-    public Long getPage() {
+    public int getPage() {
         return mPage;
     }
 
-    public void setPage(Long page) {
+    public void setPage(int page) {
         mPage = page;
     }
 
@@ -32,19 +32,19 @@ public class MoviesResponse {
         mResults = results;
     }
 
-    public Long getTotalPages() {
+    public int getTotalPages() {
         return mTotalPages;
     }
 
-    public void setTotalPages(Long totalPages) {
+    public void setTotalPages(int totalPages) {
         mTotalPages = totalPages;
     }
 
-    public Long getTotalResults() {
+    public int getTotalResults() {
         return mTotalResults;
     }
 
-    public void setTotalResults(Long totalResults) {
+    public void setTotalResults(int totalResults) {
         mTotalResults = totalResults;
     }
 

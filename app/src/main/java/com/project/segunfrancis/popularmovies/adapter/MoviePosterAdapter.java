@@ -22,8 +22,6 @@ import static com.project.segunfrancis.popularmovies.util.AppConstants.POSTER_BA
 public class MoviePosterAdapter extends
         RecyclerView.Adapter<MoviePosterAdapter.ViewHolder> {
 
-    private static final String TAG = MoviePosterAdapter.class.getSimpleName();
-
     private List<Result> moviesList;
     private OnItemClickListener onItemClickListener;
 
@@ -33,7 +31,7 @@ public class MoviePosterAdapter extends
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         ViewHolder(View itemView) {
             super(itemView);
         }
