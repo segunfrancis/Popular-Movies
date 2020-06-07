@@ -8,6 +8,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ import java.util.List;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.BACKDROP_BASE_URL;
 import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
+import static com.project.segunfrancis.popularmovies.util.AppConstants.YOUTUBE_BASE_URL;
 
 public class MovieDetailsActivity extends AppCompatActivity implements TrailerRecyclerAdapter.OnItemClickListener {
 
@@ -74,13 +76,17 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
 
             @Override
             public void onFailure(@NonNull Call<TrailerResponse> call, @NonNull Throwable t) {
-
+                Snackbar.make(mRecyclerView, "Could not load Trailers", Snackbar.LENGTH_LONG).show();
             }
         });
     }
 
     @Override
     public void onItemClick(String key) {
-        Snackbar.make(mRecyclerView, key, Snackbar.LENGTH_LONG).show();
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        String url = YOUTUBE_BASE_URL + key;
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
     }
 }

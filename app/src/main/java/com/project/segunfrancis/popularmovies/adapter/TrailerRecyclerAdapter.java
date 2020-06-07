@@ -38,7 +38,7 @@ public class TrailerRecyclerAdapter extends
                   final OnItemClickListener listener) {
             TextView title = itemView.findViewById(R.id.trailer_title_textView);
             title.setText(trailer.getName());
-            itemView.setOnClickListener(v -> listener.onItemClick(trailer.getId()));
+            itemView.setOnClickListener(v -> listener.onItemClick(trailer.getKey()));
         }
     }
 
