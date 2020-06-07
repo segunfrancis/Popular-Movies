@@ -24,4 +24,5 @@
     <string name="backdrop_image_description">movie backdrop image</string>
     <string name="poster_image_description">movie poster</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="youtube_image">Youtube image</string>
 </resources>

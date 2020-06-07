@@ -1,17 +1,28 @@
 package com.project.segunfrancis.popularmovies;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.project.segunfrancis.popularmovies.api.ApiService;
+import com.project.segunfrancis.popularmovies.api.RetrofitClient;
 import com.project.segunfrancis.popularmovies.model.Movie;
+import com.project.segunfrancis.popularmovies.model.TrailerResponse;
+import com.project.segunfrancis.popularmovies.model.TrailerResult;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.BACKDROP_BASE_URL;
+import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 
 public class MovieDetailsActivity extends AppCompatActivity {
 
@@ -41,5 +52,19 @@ public class MovieDetailsActivity extends AppCompatActivity {
         moviePlot.setText(movie.getOverview());
         movieReleaseDate.setText(movie.getReleaseDate());
         movieRating.setText(String.valueOf(movie.getVoteAverage()));
+
+        ApiService service = RetrofitClient.getClient().create(ApiService.class);
+        Call<TrailerResponse> trailerResponseCall = service.getMovieTrailers(movie.getId(), API_KEY);
+        trailerResponseCall.enqueue(new Callback<TrailerResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TrailerResponse> call, @NonNull Response<TrailerResponse> response) {
+                List<TrailerResult> trailers = response.body().getTrailerResults();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TrailerResponse> call, @NonNull Throwable t) {
+
+            }
+        });
     }
 }
