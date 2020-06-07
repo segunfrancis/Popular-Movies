@@ -10,9 +10,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,13 +31,13 @@ import com.project.segunfrancis.popularmovies.model.Movie;
 
 import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KEY;
-import static com.project.segunfrancis.popularmovies.util.AppConstants.KEY_PREF_LIST;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MoviePosterAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements MoviePosterAdapter.OnItemClickListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
@@ -43,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     private MoviePosterAdapter mAdapter;
     private GridLayoutManager mLayoutManager;
     private Group mNoInternetGroup;
-    private String mListPrefValue;
     private SharedPreferences mPreferences;
 
     @Override
@@ -55,98 +56,37 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         mRecyclerView = findViewById(R.id.movies_listRecyclerVIew);
         mNoInternetGroup = findViewById(R.id.no_internet_group);
         TextView retryButton = findViewById(R.id.retry);
-        mLayoutManager = new GridLayoutManager(this, 2);
+        mLayoutManager = new GridLayoutManager(this, calculateNoOfColumns(this));
+        moviesList = new ArrayList<>();
         mProgressBar.setVisibility(View.VISIBLE);
 
         // Get preference value
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mListPrefValue = mPreferences.getString(KEY_PREF_LIST, "0");
         String[] pref = getResources().getStringArray(R.array.sort_order);
-        displaySnackBar("You are viewing " + pref[Integer.parseInt(mListPrefValue)]);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String listPrefValue = mPreferences.getString(getResources().getString(R.string.list_pref_key), pref[0]);
+        displaySnackBar("You are viewing " + pref[Integer.parseInt(listPrefValue)]);
 
         retryButton.setOnClickListener(v -> {
             if (isConnectionAvailable()) {
-                loadMovies();
+                loadMovies(listPrefValue);
             } else {
                 mNoInternetGroup.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.GONE);
             }
         });
         if (isConnectionAvailable()) {
-            loadMovies();
+            loadMovies(listPrefValue);
         } else {
             mNoInternetGroup.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.GONE);
         }
+        mPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        String listPrefValue = mPreferences.getString(KEY_PREF_LIST, "0");
-        if (!(mListPrefValue.equals(listPrefValue))) {
-            // Preferences has changed, reload data
-            String[] pref = getResources().getStringArray(R.array.sort_order);
-            displaySnackBar("You are viewing " + pref[Integer.parseInt(listPrefValue)]);
-            mListPrefValue = mPreferences.getString(KEY_PREF_LIST, "0");
-            loadMovies();
-        }
-    }
-
-    private void loadPopularMovies() {
-        if (API_KEY.isEmpty()) {
-            Toast.makeText(this, "Obtain your api key", Toast.LENGTH_LONG).show();
-            hideDisplays();
-            return;
-        }
-        ApiService service = RetrofitClient.getClient().create(ApiService.class);
-        Call<MoviesResponse> call = service.getPopularMovies(API_KEY);
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                moviesList = new ArrayList<>();
-                moviesList = response.body().getResults();
-                mAdapter = new MoviePosterAdapter(moviesList, MainActivity.this);
-                mRecyclerView.setAdapter(mAdapter);
-                mRecyclerView.setLayoutManager(mLayoutManager);
-                hideDisplays();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
-                displaySnackBar(t.getLocalizedMessage());
-                mNoInternetGroup.setVisibility(View.VISIBLE);
-                mProgressBar.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    private void loadTopRatedMovies() {
-        if (API_KEY.isEmpty()) {
-            Toast.makeText(this, "Obtain your api key", Toast.LENGTH_LONG).show();
-            hideDisplays();
-            return;
-        }
-        ApiService service = RetrofitClient.getClient().create(ApiService.class);
-        Call<MoviesResponse> call = service.getTopRatedMovies(API_KEY);
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                moviesList = new ArrayList<>();
-                moviesList = response.body().getResults();
-                mAdapter = new MoviePosterAdapter(moviesList, MainActivity.this);
-                mRecyclerView.setAdapter(mAdapter);
-                mRecyclerView.setLayoutManager(mLayoutManager);
-                hideDisplays();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
-                displaySnackBar(t.getLocalizedMessage());
-                mNoInternetGroup.setVisibility(View.VISIBLE);
-                mProgressBar.setVisibility(View.GONE);
-            }
-        });
+    protected void onDestroy() {
+        super.onDestroy();
+        mPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -172,6 +112,78 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        String[] values = getResources().getStringArray(R.array.sort_order_values);
+        String[] order = getResources().getStringArray(R.array.sort_order);
+        if (key.equals(getResources().getString(R.string.list_pref_key))) {
+            String prefValue = sharedPreferences.getString(key, values[0]);
+            if (prefValue.equals(values[0])) {
+                loadPopularMovies();
+                displaySnackBar("You are viewing " + order[Integer.parseInt(values[0])]);
+            } else {
+                loadTopRatedMovies();
+                displaySnackBar("You are viewing " + order[Integer.parseInt(values[1])]);
+            }
+        }
+    }
+
+    private void loadPopularMovies() {
+        if (API_KEY.isEmpty()) {
+            Toast.makeText(this, "Obtain your api key", Toast.LENGTH_LONG).show();
+            hideDisplays();
+            return;
+        }
+        ApiService service = RetrofitClient.getClient().create(ApiService.class);
+        Call<MoviesResponse> call = service.getPopularMovies(API_KEY);
+        call.enqueue(new Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
+                moviesList = response.body().getResults();
+                mAdapter = new MoviePosterAdapter(moviesList, MainActivity.this);
+                mRecyclerView.setAdapter(mAdapter);
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                hideDisplays();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
+                displaySnackBar(t.getLocalizedMessage());
+                mProgressBar.setVisibility(View.GONE);
+                if (moviesList.isEmpty())
+                    mNoInternetGroup.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void loadTopRatedMovies() {
+        if (API_KEY.isEmpty()) {
+            Toast.makeText(this, "Obtain your api key", Toast.LENGTH_LONG).show();
+            hideDisplays();
+            return;
+        }
+        ApiService service = RetrofitClient.getClient().create(ApiService.class);
+        Call<MoviesResponse> call = service.getTopRatedMovies(API_KEY);
+        call.enqueue(new Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
+                moviesList = response.body().getResults();
+                mAdapter = new MoviePosterAdapter(moviesList, MainActivity.this);
+                mRecyclerView.setAdapter(mAdapter);
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                hideDisplays();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
+                displaySnackBar(t.getLocalizedMessage());
+                mProgressBar.setVisibility(View.GONE);
+                if (moviesList.isEmpty())
+                    mNoInternetGroup.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
     private void displaySnackBar(String message) {
         Snackbar.make(findViewById(R.id.movies_list_constraintLayout), message, Snackbar.LENGTH_LONG).show();
     }
@@ -193,13 +205,23 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         return false;
     }
 
-    private void loadMovies() {
+    private void loadMovies(String prefValue) {
         String[] values = getResources().getStringArray(R.array.sort_order_values);
-        if (mListPrefValue.equals(values[0])) {
+        if (prefValue.equals(values[0])) {
             // Popular movies
             loadPopularMovies();
         } else {
             loadTopRatedMovies();
         }
+    }
+
+    public int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int scalingFactor = 200;
+        int noOfColumns = (int) (dpWidth / scalingFactor);
+        if (noOfColumns < 2)
+            noOfColumns = 2;
+        return noOfColumns;
     }
 }
