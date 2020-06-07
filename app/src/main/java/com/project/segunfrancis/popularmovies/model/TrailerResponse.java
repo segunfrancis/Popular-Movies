@@ -10,13 +10,13 @@ public class TrailerResponse {
     @SerializedName("id")
     private Long mId;
     @SerializedName("results")
-    private List<Movie> mResults;
+    private List<TrailerResult> mTrailerResults;
 
     public Long getId() {
         return mId;
     }
 
-    public List<Movie> getResults() {
-        return mResults;
+    public List<TrailerResult> getTrailerResults() {
+        return mTrailerResults;
     }
 }

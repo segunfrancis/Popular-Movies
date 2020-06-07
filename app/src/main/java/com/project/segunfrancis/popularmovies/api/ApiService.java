@@ -1,6 +1,7 @@
 package com.project.segunfrancis.popularmovies.api;
 
 import com.project.segunfrancis.popularmovies.model.MoviesResponse;
+import com.project.segunfrancis.popularmovies.model.ReviewResponse;
 import com.project.segunfrancis.popularmovies.model.TrailerResponse;
 
 import retrofit2.Call;
@@ -20,5 +21,8 @@ public interface ApiService {
     Call<MoviesResponse> getTopRatedMovies(@Query("api_key") String apiKey);
 
     @GET("movie/{movie_id}/videos")
-    Call<TrailerResponse> getMoviesTrailer(@Path("movie_id") int id, @Query("api_key") String apiKey);
+    Call<TrailerResponse> getMovieTrailers(@Path("movie_id") int id, @Query("api_key") String apiKey);
+
+    @GET("movie/{movie_id}/reviews")
+    Call<ReviewResponse> getMovieReviews(@Path("movie_id") int id, @Query("api_key") String apiKey);
 }

@@ -8,4 +8,5 @@ public class AppConstants {
     public final static String POSTER_BASE_URL = "https://image.tmdb.org/t/p/w342";
     public final static String BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w780";
     public final static String INTENT_KEY = "main_activity_to_second_activity_intent_key";
+    public final static String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 }
