@@ -3,6 +3,7 @@ package com.project.segunfrancis.popularmovies.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.project.segunfrancis.popularmovies.R;
 import com.project.segunfrancis.popularmovies.model.TrailerResult;
@@ -22,8 +23,7 @@ public class TrailerRecyclerAdapter extends
     private List<TrailerResult> list;
     private OnItemClickListener onItemClickListener;
 
-    public TrailerRecyclerAdapter(List<TrailerResult> list,
-                                  OnItemClickListener onItemClickListener) {
+    public TrailerRecyclerAdapter(List<TrailerResult> list, OnItemClickListener onItemClickListener) {
         this.list = list;
         this.onItemClickListener = onItemClickListener;
     }
@@ -34,14 +34,11 @@ public class TrailerRecyclerAdapter extends
             super(itemView);
         }
 
-        public void bind(final TrailerResult model,
-                         final OnItemClickListener listener) {
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(getLayoutPosition());
-                }
-            });
+        void bind(final TrailerResult trailer,
+                  final OnItemClickListener listener) {
+            TextView title = itemView.findViewById(R.id.trailer_title_textView);
+            title.setText(trailer.getName());
+            itemView.setOnClickListener(v -> listener.onItemClick(trailer.getId()));
         }
     }
 
@@ -65,6 +62,6 @@ public class TrailerRecyclerAdapter extends
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int position);
+        void onItemClick(String key);
     }
 }

@@ -2,6 +2,7 @@ package com.project.segunfrancis.popularmovies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -11,6 +12,9 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.project.segunfrancis.popularmovies.adapter.MarginItemDecoration;
+import com.project.segunfrancis.popularmovies.adapter.TrailerRecyclerAdapter;
 import com.project.segunfrancis.popularmovies.api.ApiService;
 import com.project.segunfrancis.popularmovies.api.RetrofitClient;
 import com.project.segunfrancis.popularmovies.model.Movie;
@@ -24,7 +28,9 @@ import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KE
 import static com.project.segunfrancis.popularmovies.util.AppConstants.BACKDROP_BASE_URL;
 import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 
-public class MovieDetailsActivity extends AppCompatActivity {
+public class MovieDetailsActivity extends AppCompatActivity implements TrailerRecyclerAdapter.OnItemClickListener {
+
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         TextView moviePlot = findViewById(R.id.plot_synopsis_textView);
         TextView movieReleaseDate = findViewById(R.id.release_date_textView);
         TextView movieRating = findViewById(R.id.vote_average_textView);
+        mRecyclerView = findViewById(R.id.trailers_recyclerView);
 
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra(INTENT_KEY);
@@ -59,6 +66,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<TrailerResponse> call, @NonNull Response<TrailerResponse> response) {
                 List<TrailerResult> trailers = response.body().getTrailerResults();
+                TrailerRecyclerAdapter adapter = new TrailerRecyclerAdapter(trailers, MovieDetailsActivity.this);
+                mRecyclerView.setAdapter(adapter);
+                mRecyclerView.setHasFixedSize(true);
+                mRecyclerView.addItemDecoration(new MarginItemDecoration(16));
             }
 
             @Override
@@ -66,5 +77,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onItemClick(String key) {
+        Snackbar.make(mRecyclerView, key, Snackbar.LENGTH_LONG).show();
     }
 }

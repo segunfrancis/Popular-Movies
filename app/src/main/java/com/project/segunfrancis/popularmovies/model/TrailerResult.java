@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by SegunFrancis
  */
-
+@SuppressWarnings("unused")
 public class TrailerResult {
     @SerializedName("id")
     private String id;
