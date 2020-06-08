@@ -5,7 +5,6 @@ import com.project.segunfrancis.popularmovies.model.Movie;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -20,11 +19,11 @@ public interface MovieDao {
     void insertFavoriteMovie(Movie movie);
 
     @Query("SELECT * from movie_table")
-    MutableLiveData<List<Movie>> getFavoriteMovies();
+    LiveData<List<Movie>> getFavoriteMovies();
 
     @Query("DELETE from movie_table where id is :movieId")
     void deleteFavoriteMovie(int movieId);
 
     @Query("SELECT * from movie_table where id is :movieId")
-    MutableLiveData<Movie> checkFavoriteMovie(int movieId);
+    LiveData<Movie> checkFavoriteMovie(int movieId);
 }

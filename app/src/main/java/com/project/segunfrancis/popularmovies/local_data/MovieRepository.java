@@ -18,18 +18,16 @@ import retrofit2.Call;
  */
 public class MovieRepository {
     private MovieDao mMovieDao;
-    private MutableLiveData<List<Movie>> mMovieList;
     private ApiService mService;
 
     MovieRepository(Application application) {
         MovieRoomDatabase database = MovieRoomDatabase.getDatabase(application);
         mMovieDao = database.mMovieDao();
-        mMovieList = mMovieDao.getFavoriteMovies();
         mService = RetrofitClient.getClient().create(ApiService.class);
     }
 
-    MutableLiveData<List<Movie>> getFavoriteMovies() {
-        return mMovieList;
+    LiveData<List<Movie>> getFavoriteMovies() {
+        return mMovieDao.getFavoriteMovies();
     }
 
     void insertFavoriteMovie(Movie movie) {

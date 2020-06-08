@@ -1,9 +1,8 @@
 package com.project.segunfrancis.popularmovies.local_data;
 
 import android.app.Application;
+import android.util.Log;
 
-import com.project.segunfrancis.popularmovies.api.ApiService;
-import com.project.segunfrancis.popularmovies.api.RetrofitClient;
 import com.project.segunfrancis.popularmovies.model.Movie;
 import com.project.segunfrancis.popularmovies.model.MoviesResponse;
 import com.project.segunfrancis.popularmovies.util.State;
@@ -18,13 +17,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
+
 /**
  * Created by SegunFrancis
  */
 public class MovieViewModel extends AndroidViewModel {
     private MovieRepository mRepository;
-    public MutableLiveData<List<Movie>> mMovieList;
-    public MutableLiveData<State> mStateMutableLiveData;
+    public MutableLiveData<List<Movie>> popularMovieList = new MutableLiveData<>();
+    public MutableLiveData<List<Movie>> topRatedMovieList = new MutableLiveData<>();
+
+    public MutableLiveData<State> mStateMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<String> message = new MutableLiveData<>();
 
     public MovieViewModel(@NonNull Application application) {
         super(application);
@@ -43,42 +47,51 @@ public class MovieViewModel extends AndroidViewModel {
         return mRepository.checkFavoriteMovie(movieId);
     }
 
-    public void loadPopularMovies(String key) {
+    public void loadPopularMovies() {
+        if (API_KEY.isEmpty()) {
+            mStateMutableLiveData.setValue(State.ERROR);
+            message.setValue("Obtain your API key");
+            return;
+        }
         mStateMutableLiveData.setValue(State.LOADING);
-        mRepository.loadPopularMovies(key).enqueue(new Callback<MoviesResponse>() {
+        mRepository.loadPopularMovies(API_KEY).enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                mMovieList.setValue(response.body().getResults());
+                popularMovieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
             }
 
             @Override
             public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
                 mStateMutableLiveData.setValue(State.ERROR);
+                message.setValue(t.getLocalizedMessage());
             }
         });
     }
 
-    public void loadTopRatedMovies(String key) {
+    public void loadTopRatedMovies() {
+        if (API_KEY.isEmpty()) {
+            mStateMutableLiveData.setValue(State.ERROR);
+            message.setValue("Obtain your API key");
+            return;
+        }
         mStateMutableLiveData.setValue(State.LOADING);
-        mRepository.loadTopRatedMovies(key).enqueue(new Callback<MoviesResponse>() {
+        mRepository.loadTopRatedMovies(API_KEY).enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                mMovieList.setValue(response.body().getResults());
+                topRatedMovieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
             }
 
             @Override
             public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
                 mStateMutableLiveData.setValue(State.ERROR);
+                message.setValue(t.getLocalizedMessage());
             }
         });
     }
 
-    public void loadFavoriteMovies() {
-        if (mRepository.getFavoriteMovies().getValue().isEmpty()) {
-            mStateMutableLiveData.setValue(State.EMPTY);
-        } else
-            mMovieList = mRepository.getFavoriteMovies();
+    public LiveData<List<Movie>> loadFavoriteMovies() {
+        return mRepository.getFavoriteMovies();
     }
 }

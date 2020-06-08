@@ -3,13 +3,11 @@ package com.project.segunfrancis.popularmovies;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,34 +19,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.project.segunfrancis.popularmovies.adapter.MoviePosterAdapter;
-import com.project.segunfrancis.popularmovies.api.ApiService;
-import com.project.segunfrancis.popularmovies.api.RetrofitClient;
 import com.project.segunfrancis.popularmovies.local_data.MovieViewModel;
-import com.project.segunfrancis.popularmovies.model.MoviesResponse;
 import com.project.segunfrancis.popularmovies.model.Movie;
+import com.project.segunfrancis.popularmovies.util.State;
 
-import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KEY;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MoviePosterAdapter.OnItemClickListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ProgressBar mProgressBar;
-    private RecyclerView mRecyclerView;
-    private List<Movie> mMovieList;
-    private MoviePosterAdapter mAdapter;
-    private GridLayoutManager mLayoutManager;
     private Group mNoInternetGroup, mEmptyFavoriteGroup;
     private SharedPreferences mPreferences;
     private MovieViewModel mViewModel;
+    private MoviePosterAdapter mAdapter;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,25 +53,59 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         mNoInternetGroup = findViewById(R.id.no_internet_group);
         mEmptyFavoriteGroup = findViewById(R.id.empty_favorite_list_group);
         TextView retryButton = findViewById(R.id.retry);
-        mLayoutManager = new GridLayoutManager(this, calculateNoOfColumns(this));
-        mMovieList = new ArrayList<>();
+        GridLayoutManager layoutManager = new GridLayoutManager(this, calculateNoOfColumns(this));
         mProgressBar.setVisibility(View.VISIBLE);
 
         // Get preference value
+        mRecyclerView.setLayoutManager(layoutManager);
         String[] prefValues = getResources().getStringArray(R.array.sort_order_values);
         String[] pref = getResources().getStringArray(R.array.sort_order);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String listPrefValue = mPreferences.getString(getResources().getString(R.string.list_pref_key), prefValues[0]);
-        displaySnackBar("You are viewing " + pref[Integer.parseInt(listPrefValue)]);
+        if (listPrefValue.equals(prefValues[0])) {
+            observePopularMovies();
+            displaySnackBar("You are viewing " + pref[Integer.parseInt(prefValues[0])]);
+        } else if (listPrefValue.equals(prefValues[1])) {
+            observeTopRatedMovies();
+            displaySnackBar("You are viewing " + pref[Integer.parseInt(prefValues[1])]);
+        } else {
+            observeFavMovies();
+            displaySnackBar("You are viewing " + pref[Integer.parseInt(prefValues[2])]);
+        }
 
-        retryButton.setOnClickListener(v -> {
+        mViewModel.mStateMutableLiveData.observe(this, new Observer<State>() {
+            @Override
+            public void onChanged(State state) {
+                switch (state) {
+                    case LOADING: {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                    case SUCCESS: {
+                        //displaySnackBar("You are viewing " + pref[Integer.parseInt(listPrefValue)]);
+                        break;
+                    }
+                    case EMPTY: {
+                        mEmptyFavoriteGroup.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                    case ERROR: {
+                        mNoInternetGroup.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                }
+            }
+        });
+
+        mViewModel.message.observe(this, this::displaySnackBar);
+        /*retryButton.setOnClickListener(v -> {
             if (isConnectionAvailable()) {
                 loadMovies(listPrefValue);
             } else {
                 mNoInternetGroup.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.GONE);
             }
-        });
+        });*/
         if (isConnectionAvailable()) {
             loadMovies(listPrefValue);
         } else {
@@ -126,19 +151,22 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         if (key.equals(getResources().getString(R.string.list_pref_key))) {
             String prefValue = sharedPreferences.getString(key, values[0]);
             if (prefValue.equals(values[0])) {
-                loadPopularMovies();
-                displaySnackBar("You are viewing " + order[Integer.parseInt(values[0])]);
+                mViewModel.loadPopularMovies();
+                observePopularMovies();
+                //displaySnackBar("You are viewing " + order[Integer.parseInt(values[0])]);
             } else if (prefValue.equals(values[1])) {
-                loadTopRatedMovies();
-                displaySnackBar("You are viewing " + order[Integer.parseInt(values[1])]);
+                mViewModel.loadTopRatedMovies();
+                observeTopRatedMovies();
+                //displaySnackBar("You are viewing " + order[Integer.parseInt(values[1])]);
             } else {
-                displayFavoriteMovies();
-                displaySnackBar("You are viewing " + order[Integer.parseInt(values[2])]);
+                mViewModel.loadFavoriteMovies();
+                observeFavMovies();
+                //displaySnackBar("You are viewing " + order[Integer.parseInt(values[2])]);
             }
         }
     }
 
-    private void loadPopularMovies() {
+   /* private void loadPopularMovies() {
         if (API_KEY.isEmpty()) {
             Toast.makeText(this, "Obtain your api key", Toast.LENGTH_LONG).show();
             hideDisplays();
@@ -164,9 +192,9 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
                     mNoInternetGroup.setVisibility(View.VISIBLE);
             }
         });
-    }
+    }*/
 
-    private void loadTopRatedMovies() {
+   /* private void loadTopRatedMovies() {
         if (API_KEY.isEmpty()) {
             Toast.makeText(this, "Obtain your api key", Toast.LENGTH_LONG).show();
             hideDisplays();
@@ -192,9 +220,9 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
                     mNoInternetGroup.setVisibility(View.VISIBLE);
             }
         });
-    }
+    }*/
 
-    private void displayFavoriteMovies() {
+    /*private void displayFavoriteMovies() {
         mViewModel.getFavoriteMovies().observe(this, movieList -> {
             MoviePosterAdapter adapter = new MoviePosterAdapter(movieList, MainActivity.this);
             if (movieList.isEmpty()) {
@@ -207,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
             mRecyclerView.setAdapter(adapter);
             mRecyclerView.setLayoutManager(mLayoutManager);
         });
-    }
+    }*/
 
     private void displaySnackBar(String message) {
         Snackbar.make(findViewById(R.id.movies_list_constraintLayout), message, Snackbar.LENGTH_LONG).show();
@@ -234,12 +262,42 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         String[] values = getResources().getStringArray(R.array.sort_order_values);
         if (prefValue.equals(values[0])) {
             // Popular movies
-            loadPopularMovies();
+            mViewModel.loadPopularMovies();
         } else if (prefValue.equals(values[1])) {
-            loadTopRatedMovies();
+            mViewModel.loadTopRatedMovies();
         } else {
-            displayFavoriteMovies();
+            mViewModel.loadFavoriteMovies();
         }
+    }
+
+    private void observePopularMovies() {
+        mViewModel.popularMovieList.observe(MainActivity.this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(List<Movie> movies) {
+                mAdapter = new MoviePosterAdapter(movies, MainActivity.this);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
+    }
+
+    private void observeTopRatedMovies() {
+        mViewModel.topRatedMovieList.observe(MainActivity.this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(List<Movie> movies) {
+                mAdapter = new MoviePosterAdapter(movies, MainActivity.this);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
+    }
+
+    private void observeFavMovies() {
+        mViewModel.loadFavoriteMovies().observe(MainActivity.this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(List<Movie> movies) {
+                mAdapter = new MoviePosterAdapter(movies, MainActivity.this);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
     }
 
     public int calculateNoOfColumns(Context context) {

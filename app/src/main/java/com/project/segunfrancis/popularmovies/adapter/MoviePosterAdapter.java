@@ -9,6 +9,7 @@ import com.project.segunfrancis.popularmovies.R;
 import com.project.segunfrancis.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -22,7 +23,7 @@ import static com.project.segunfrancis.popularmovies.util.AppConstants.POSTER_BA
 public class MoviePosterAdapter extends
         RecyclerView.Adapter<MoviePosterAdapter.ViewHolder> {
 
-    private List<Movie> moviesList;
+    private List<Movie> moviesList = new ArrayList<>();
     private OnItemClickListener onItemClickListener;
 
     public MoviePosterAdapter(List<Movie> moviesList, OnItemClickListener onItemClickListener) {
@@ -64,6 +65,9 @@ public class MoviePosterAdapter extends
 
     @Override
     public int getItemCount() {
+        /*if (moviesList.isEmpty())
+            return 0;
+        else*/
         return moviesList.size();
     }
 
