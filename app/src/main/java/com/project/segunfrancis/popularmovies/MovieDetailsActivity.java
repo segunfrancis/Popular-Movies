@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.project.segunfrancis.popularmovies.adapter.MarginItemDecoration;
 import com.project.segunfrancis.popularmovies.adapter.MovieReviewAdapter;
@@ -38,6 +39,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
 
     private RecyclerView mTrailerRecyclerView, mReviewRecyclerView;
     private ApiService mService;
+    private ExtendedFloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,11 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         TextView movieRating = findViewById(R.id.vote_average_textView);
         mTrailerRecyclerView = findViewById(R.id.trailers_recyclerView);
         mReviewRecyclerView = findViewById(R.id.reviews_recyclerView);
+        fab = findViewById(R.id.extended_fab);
+
+        fab.setOnClickListener(view -> {
+            Snackbar.make(mReviewRecyclerView, "Clicked", Snackbar.LENGTH_LONG).show();
+        });
 
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra(INTENT_KEY);
