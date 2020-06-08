@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,7 +44,7 @@ public class MovieViewModel extends AndroidViewModel {
         mRepository.deleteFavoriteMovie(movieId);
     }
 
-    public boolean checkFavoriteMovie(int movieId) {
+    public LiveData<Movie> checkFavoriteMovie(int movieId) {
         return mRepository.checkFavoriteMovie(movieId);
     }
 
@@ -94,7 +95,17 @@ public class MovieViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Movie>> loadFavoriteMovies() {
+        mRepository.getFavoriteMovies().observeForever(new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(List<Movie> movies) {
+                if (movies.isEmpty()) {
+                    mStateMutableLiveData.setValue(State.EMPTY);
+                    return;
+                }
+            }
+        });
         message.setValue("You are viewing your Favorite Movies");
+        mStateMutableLiveData.setValue(State.SUCCESS);
         return mRepository.getFavoriteMovies();
     }
 }

@@ -38,9 +38,8 @@ public class MovieRepository {
         mMovieDao.deleteFavoriteMovie(movieId);
     }
 
-    boolean checkFavoriteMovie(int movieId) {
-        LiveData<Movie> singleMovie = mMovieDao.checkFavoriteMovie(movieId);
-        return singleMovie != null;
+    LiveData<Movie> checkFavoriteMovie(int movieId) {
+        return mMovieDao.checkFavoriteMovie(movieId);
     }
 
     Call<MoviesResponse> loadPopularMovies(String apiKey) {

@@ -2,6 +2,8 @@ package com.project.segunfrancis.popularmovies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
@@ -9,6 +11,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -76,9 +79,27 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         movieReleaseDate.setText(movie.getReleaseDate());
         movieRating.setText(String.valueOf(movie.getVoteAverage()));
 
-        fab.setOnClickListener(view -> {
-            addMovieToDatabase(movie);
-            Snackbar.make(mReviewRecyclerView, "Clicked", Snackbar.LENGTH_LONG).show();
+        mViewModel.checkFavoriteMovie(movie.getId()).observe(MovieDetailsActivity.this, new Observer<Movie>() {
+            @Override
+            public void onChanged(Movie singleMovie) {
+                if (singleMovie.getId() == movie.getId()) {
+                    // Movie is already a favorite
+                    fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
+                } else {
+                    fab.setIcon(getResources().getDrawable(R.drawable.ic_star_border_24dp));
+                }
+                fab.setOnClickListener(view -> {
+                    if (singleMovie.getId() == movie.getId()) {
+                        removeMovieFromDatabase(movie.getId());
+                        fab.setIcon(getResources().getDrawable(R.drawable.ic_star_border_24dp));
+                        Snackbar.make(mReviewRecyclerView, movie.getTitle() + " removed from favorites", Snackbar.LENGTH_LONG).show();
+                    } else {
+                        addMovieToDatabase(movie);
+                        fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
+                        Snackbar.make(mReviewRecyclerView, movie.getTitle() + " added to favorites", Snackbar.LENGTH_LONG).show();
+                    }
+                });
+            }
         });
 
         // Create Retrofit client
@@ -131,10 +152,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
 
     private void removeMovieFromDatabase(int movieId) {
         mViewModel.deleteFavoriteMovie(movieId);
-    }
-
-    private boolean isMovieFavorite(int movieId) {
-        return mViewModel.checkFavoriteMovie(movieId);
     }
 
     @Override
