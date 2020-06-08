@@ -2,6 +2,7 @@ package com.project.segunfrancis.popularmovies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,6 +21,7 @@ import com.project.segunfrancis.popularmovies.adapter.MovieReviewAdapter;
 import com.project.segunfrancis.popularmovies.adapter.TrailerRecyclerAdapter;
 import com.project.segunfrancis.popularmovies.api.ApiService;
 import com.project.segunfrancis.popularmovies.api.RetrofitClient;
+import com.project.segunfrancis.popularmovies.local_data.MovieViewModel;
 import com.project.segunfrancis.popularmovies.model.Movie;
 import com.project.segunfrancis.popularmovies.model.ReviewResponse;
 import com.project.segunfrancis.popularmovies.model.ReviewResult;
@@ -40,11 +42,14 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
     private RecyclerView mTrailerRecyclerView, mReviewRecyclerView;
     private ApiService mService;
     private ExtendedFloatingActionButton fab;
+    private MovieViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
+
+        mViewModel = new ViewModelProvider(this).get(MovieViewModel.class);
 
         ImageView movieBackDrop = findViewById(R.id.backdrop_imageView);
         TextView movieTitle = findViewById(R.id.title_textView);
@@ -54,10 +59,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         mTrailerRecyclerView = findViewById(R.id.trailers_recyclerView);
         mReviewRecyclerView = findViewById(R.id.reviews_recyclerView);
         fab = findViewById(R.id.extended_fab);
-
-        fab.setOnClickListener(view -> {
-            Snackbar.make(mReviewRecyclerView, "Clicked", Snackbar.LENGTH_LONG).show();
-        });
 
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra(INTENT_KEY);
@@ -74,6 +75,11 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         moviePlot.setText(movie.getOverview());
         movieReleaseDate.setText(movie.getReleaseDate());
         movieRating.setText(String.valueOf(movie.getVoteAverage()));
+
+        fab.setOnClickListener(view -> {
+            addMovieToDatabase(movie);
+            Snackbar.make(mReviewRecyclerView, "Clicked", Snackbar.LENGTH_LONG).show();
+        });
 
         // Create Retrofit client
         mService = RetrofitClient.getClient().create(ApiService.class);
@@ -117,6 +123,18 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
                 Snackbar.make(mTrailerRecyclerView, "Could not load Reviews", Snackbar.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void addMovieToDatabase(Movie movie) {
+        mViewModel.insertFavoriteMovie(movie);
+    }
+
+    private void removeMovieFromDatabase(int movieId) {
+        mViewModel.deleteFavoriteMovie(movieId);
+    }
+
+    private boolean isMovieFavorite(int movieId) {
+        return mViewModel.checkFavoriteMovie(movieId);
     }
 
     @Override

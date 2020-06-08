@@ -12,10 +12,12 @@
     <string-array name="sort_order">
         <item>Popular Movies</item>
         <item>Top Rated Movies</item>
+        <item>Favorite Movies</item>
     </string-array>
     <string-array name="sort_order_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
     <string name="list_pref_key" translatable="false">list_preference</string>
 
@@ -28,4 +30,6 @@
     <string name="movie_trailers">Trailers:</string>
     <string name="movie_reviews">Reviews:</string>
     <string name="read_more_text">Read More</string>
+    <string name="empty_favorite_list">Your favourite list is empty</string>
+    <string name="empty_list_image">Empty favourite list image</string>
 </resources>

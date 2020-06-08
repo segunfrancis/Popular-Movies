@@ -7,35 +7,63 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 @SuppressWarnings("unused")
+@Entity(tableName = "movie_table")
 public class Movie implements Parcelable {
 
+    @Ignore
     @SerializedName("adult")
     private Boolean mAdult;
+
     @SerializedName("backdrop_path")
     private String mBackdropPath;
+
+    @Ignore
     @SerializedName("genre_ids")
     private List<Integer> mGenreIds;
+
+    @PrimaryKey
+    @ColumnInfo(name = "id")
     @SerializedName("id")
     private int mId;
+
+    @Ignore
     @SerializedName("original_language")
     private String mOriginalLanguage;
+
+    @Ignore
     @SerializedName("original_title")
     private String mOriginalTitle;
+
     @SerializedName("overview")
     private String mOverview;
+
+    @Ignore
     @SerializedName("popularity")
     private double mPopularity;
+
     @SerializedName("poster_path")
     private String mPosterPath;
+
     @SerializedName("release_date")
     private String mReleaseDate;
+
     @SerializedName("title")
     private String mTitle;
+
+    @Ignore
     @SerializedName("video")
     private Boolean mVideo;
+
     @SerializedName("vote_average")
-    private Double mVoteAverage;
+    private double mVoteAverage;
+
+    @Ignore
     @SerializedName("vote_count")
     private int mVoteCount;
 
@@ -53,11 +81,7 @@ public class Movie implements Parcelable {
         mTitle = in.readString();
         byte tmpMVideo = in.readByte();
         mVideo = tmpMVideo == 0 ? null : tmpMVideo == 1;
-        if (in.readByte() == 0) {
-            mVoteAverage = null;
-        } else {
-            mVoteAverage = in.readDouble();
-        }
+        mVoteAverage = in.readDouble();
         mVoteCount = in.readInt();
     }
 
@@ -137,6 +161,40 @@ public class Movie implements Parcelable {
         return mVoteCount;
     }
 
+
+
+    @Ignore
+    public Movie(Boolean adult, String backdropPath, List<Integer> genreIds, int id,
+                 String originalLanguage, String originalTitle, String overview,
+                 double popularity, String posterPath, String releaseDate, String title,
+                 Boolean video, double voteAverage, int voteCount) {
+        mAdult = adult;
+        mBackdropPath = backdropPath;
+        mGenreIds = genreIds;
+        mId = id;
+        mOriginalLanguage = originalLanguage;
+        mOriginalTitle = originalTitle;
+        mOverview = overview;
+        mPopularity = popularity;
+        mPosterPath = posterPath;
+        mReleaseDate = releaseDate;
+        mTitle = title;
+        mVideo = video;
+        mVoteAverage = voteAverage;
+        mVoteCount = voteCount;
+    }
+
+    public Movie(String backdropPath, int id, String overview, String posterPath,
+                 String releaseDate, String title, double voteAverage) {
+        mBackdropPath = backdropPath;
+        mId = id;
+        mOverview = overview;
+        mPosterPath = posterPath;
+        mReleaseDate = releaseDate;
+        mTitle = title;
+        mVoteAverage = voteAverage;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -155,12 +213,7 @@ public class Movie implements Parcelable {
         parcel.writeString(mReleaseDate);
         parcel.writeString(mTitle);
         parcel.writeByte((byte) (mVideo == null ? 0 : mVideo ? 1 : 2));
-        if (mVoteAverage == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeDouble(mVoteAverage);
-        }
+        parcel.writeDouble(mVoteAverage);
         parcel.writeInt(mVoteCount);
     }
 }

@@ -11,7 +11,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
         app:backgroundTint="@android:color/white"
-        app:icon="@drawable/ic_unfavorite_24dp" />
+        app:icon="@drawable/ic_star_border_24dp" />
 
     <include layout="@layout/content_movie_details" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
