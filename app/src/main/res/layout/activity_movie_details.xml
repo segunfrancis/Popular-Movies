@@ -162,8 +162,20 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/reviews_recyclerView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trailers_recyclerView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reviews_recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reviews_textView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:listitem="@layout/item_review_list" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

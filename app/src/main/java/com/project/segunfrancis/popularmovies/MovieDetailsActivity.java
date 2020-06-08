@@ -15,10 +15,13 @@ import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.project.segunfrancis.popularmovies.adapter.MarginItemDecoration;
+import com.project.segunfrancis.popularmovies.adapter.MovieReviewAdapter;
 import com.project.segunfrancis.popularmovies.adapter.TrailerRecyclerAdapter;
 import com.project.segunfrancis.popularmovies.api.ApiService;
 import com.project.segunfrancis.popularmovies.api.RetrofitClient;
 import com.project.segunfrancis.popularmovies.model.Movie;
+import com.project.segunfrancis.popularmovies.model.ReviewResponse;
+import com.project.segunfrancis.popularmovies.model.ReviewResult;
 import com.project.segunfrancis.popularmovies.model.TrailerResponse;
 import com.project.segunfrancis.popularmovies.model.TrailerResult;
 import com.squareup.picasso.Picasso;
@@ -30,9 +33,11 @@ import static com.project.segunfrancis.popularmovies.util.AppConstants.BACKDROP_
 import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.YOUTUBE_BASE_URL;
 
-public class MovieDetailsActivity extends AppCompatActivity implements TrailerRecyclerAdapter.OnItemClickListener {
+public class MovieDetailsActivity extends AppCompatActivity implements TrailerRecyclerAdapter.OnItemClickListener,
+        MovieReviewAdapter.OnItemClickListener {
 
-    private RecyclerView mRecyclerView;
+    private RecyclerView mTrailerRecyclerView, mReviewRecyclerView;
+    private ApiService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +49,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         TextView moviePlot = findViewById(R.id.plot_synopsis_textView);
         TextView movieReleaseDate = findViewById(R.id.release_date_textView);
         TextView movieRating = findViewById(R.id.vote_average_textView);
-        mRecyclerView = findViewById(R.id.trailers_recyclerView);
+        mTrailerRecyclerView = findViewById(R.id.trailers_recyclerView);
+        mReviewRecyclerView = findViewById(R.id.reviews_recyclerView);
 
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra(INTENT_KEY);
@@ -62,30 +68,63 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         movieReleaseDate.setText(movie.getReleaseDate());
         movieRating.setText(String.valueOf(movie.getVoteAverage()));
 
-        ApiService service = RetrofitClient.getClient().create(ApiService.class);
-        Call<TrailerResponse> trailerResponseCall = service.getMovieTrailers(movie.getId(), API_KEY);
+        // Create Retrofit client
+        mService = RetrofitClient.getClient().create(ApiService.class);
+
+        loadMovieTrailers(movie);
+        loadMovieReviews(movie);
+    }
+
+    private void loadMovieTrailers(Movie movie) {
+        Call<TrailerResponse> trailerResponseCall = mService.getMovieTrailers(movie.getId(), API_KEY);
         trailerResponseCall.enqueue(new Callback<TrailerResponse>() {
             @Override
             public void onResponse(@NonNull Call<TrailerResponse> call, @NonNull Response<TrailerResponse> response) {
                 List<TrailerResult> trailers = response.body().getTrailerResults();
                 TrailerRecyclerAdapter adapter = new TrailerRecyclerAdapter(trailers, MovieDetailsActivity.this);
-                mRecyclerView.setAdapter(adapter);
-                mRecyclerView.setHasFixedSize(true);
-                mRecyclerView.addItemDecoration(new MarginItemDecoration(16));
+                mTrailerRecyclerView.setAdapter(adapter);
+                mTrailerRecyclerView.setHasFixedSize(true);
+                mTrailerRecyclerView.addItemDecoration(new MarginItemDecoration(16));
             }
 
             @Override
             public void onFailure(@NonNull Call<TrailerResponse> call, @NonNull Throwable t) {
-                Snackbar.make(mRecyclerView, "Could not load Trailers", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(mTrailerRecyclerView, "Could not load Trailers", Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void loadMovieReviews(Movie movie) {
+        Call<ReviewResponse> reviewResponseCall = mService.getMovieReviews(movie.getId(), API_KEY);
+        reviewResponseCall.enqueue(new Callback<ReviewResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReviewResponse> call, @NonNull Response<ReviewResponse> response) {
+                List<ReviewResult> reviews = response.body().getResults();
+                MovieReviewAdapter adapter = new MovieReviewAdapter(reviews, MovieDetailsActivity.this);
+                mReviewRecyclerView.setAdapter(adapter);
+                mReviewRecyclerView.addItemDecoration(new MarginItemDecoration(16));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReviewResponse> call, @NonNull Throwable t) {
+                Snackbar.make(mTrailerRecyclerView, "Could not load Reviews", Snackbar.LENGTH_LONG).show();
             }
         });
     }
 
     @Override
-    public void onItemClick(String key) {
+    public void onTrailerItemClick(String key) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         String url = YOUTUBE_BASE_URL + key;
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onReviewItemClick(String url) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         startActivity(intent);
     }

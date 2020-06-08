@@ -61,9 +61,10 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         mProgressBar.setVisibility(View.VISIBLE);
 
         // Get preference value
+        String[] prefValues = getResources().getStringArray(R.array.sort_order_values);
         String[] pref = getResources().getStringArray(R.array.sort_order);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String listPrefValue = mPreferences.getString(getResources().getString(R.string.list_pref_key), pref[0]);
+        String listPrefValue = mPreferences.getString(getResources().getString(R.string.list_pref_key), prefValues[0]);
         displaySnackBar("You are viewing " + pref[Integer.parseInt(listPrefValue)]);
 
         retryButton.setOnClickListener(v -> {
