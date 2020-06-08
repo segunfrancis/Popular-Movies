@@ -79,7 +79,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         movieReleaseDate.setText(movie.getReleaseDate());
         movieRating.setText(String.valueOf(movie.getVoteAverage()));
 
-        mViewModel.checkFavoriteMovie(movie.getId()).observe(MovieDetailsActivity.this, new Observer<Movie>() {
+        fab.setOnClickListener(view -> addMovieToDatabase(movie));
+        /*mViewModel.checkFavoriteMovie(movie.getId()).observe(MovieDetailsActivity.this, new Observer<Movie>() {
             @Override
             public void onChanged(Movie singleMovie) {
                 if (singleMovie.getId() == movie.getId()) {
@@ -100,7 +101,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
                     }
                 });
             }
-        });
+        });*/
 
         // Create Retrofit client
         mService = RetrofitClient.getClient().create(ApiService.class);

@@ -25,8 +25,7 @@ import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
  */
 public class MovieViewModel extends AndroidViewModel {
     private MovieRepository mRepository;
-    public MutableLiveData<List<Movie>> popularMovieList = new MutableLiveData<>();
-    public MutableLiveData<List<Movie>> topRatedMovieList = new MutableLiveData<>();
+    public MutableLiveData<List<Movie>> movieList = new MutableLiveData<>();
 
     public MutableLiveData<State> mStateMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<String> message = new MutableLiveData<>();
@@ -58,7 +57,7 @@ public class MovieViewModel extends AndroidViewModel {
         mRepository.loadPopularMovies(API_KEY).enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                popularMovieList.setValue(response.body().getResults());
+                movieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
                 message.setValue("You are viewing Popular Movies");
             }
@@ -81,7 +80,7 @@ public class MovieViewModel extends AndroidViewModel {
         mRepository.loadTopRatedMovies(API_KEY).enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                topRatedMovieList.setValue(response.body().getResults());
+                movieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
                 message.setValue("You are viewing Top Rated Movies");
             }
@@ -94,18 +93,19 @@ public class MovieViewModel extends AndroidViewModel {
         });
     }
 
-    public LiveData<List<Movie>> loadFavoriteMovies() {
+    public void loadFavoriteMovies() {
         mRepository.getFavoriteMovies().observeForever(new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {
                 if (movies.isEmpty()) {
                     mStateMutableLiveData.setValue(State.EMPTY);
-                    return;
+                    movieList.setValue(movies);
+                } else {
+                    message.setValue("You are viewing your Favorite Movies");
+                    mStateMutableLiveData.setValue(State.SUCCESS);
+                    movieList.setValue(movies);
                 }
             }
         });
-        message.setValue("You are viewing your Favorite Movies");
-        mStateMutableLiveData.setValue(State.SUCCESS);
-        return mRepository.getFavoriteMovies();
     }
 }

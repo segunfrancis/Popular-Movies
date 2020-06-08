@@ -95,12 +95,6 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        loadMovies();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         mPreferences.unregisterOnSharedPreferenceChangeListener(this);
@@ -169,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         if (listPrefValue.equals(prefValues[0])) {
             if (isConnectionAvailable()) {
                 mViewModel.loadPopularMovies();
-                observePopularMovies();
+                observeMoviesList();
             } else {
                 mNoInternetGroup.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.GONE);
@@ -177,32 +171,19 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         } else if (listPrefValue.equals(prefValues[1])) {
             if (isConnectionAvailable()) {
                 mViewModel.loadTopRatedMovies();
-                observeTopRatedMovies();
+                observeMoviesList();
             } else {
                 mNoInternetGroup.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.GONE);
             }
         } else {
-            observeFavMovies();
+            mViewModel.loadFavoriteMovies();
+            observeMoviesList();
         }
     }
 
-    private void observePopularMovies() {
-        mViewModel.popularMovieList.observe(MainActivity.this, movies -> {
-            MoviePosterAdapter adapter = new MoviePosterAdapter(movies, MainActivity.this);
-            mRecyclerView.setAdapter(adapter);
-        });
-    }
-
-    private void observeTopRatedMovies() {
-        mViewModel.topRatedMovieList.observe(MainActivity.this, movies -> {
-            MoviePosterAdapter adapter = new MoviePosterAdapter(movies, MainActivity.this);
-            mRecyclerView.setAdapter(adapter);
-        });
-    }
-
-    private void observeFavMovies() {
-        mViewModel.loadFavoriteMovies().observe(MainActivity.this, movies -> {
+    private void observeMoviesList() {
+        mViewModel.movieList.observe(MainActivity.this, movies -> {
             MoviePosterAdapter adapter = new MoviePosterAdapter(movies, MainActivity.this);
             mRecyclerView.setAdapter(adapter);
         });
