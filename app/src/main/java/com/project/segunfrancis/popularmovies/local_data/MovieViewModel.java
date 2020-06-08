@@ -59,6 +59,7 @@ public class MovieViewModel extends AndroidViewModel {
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
                 popularMovieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
+                message.setValue("You are viewing Popular Movies");
             }
 
             @Override
@@ -81,6 +82,7 @@ public class MovieViewModel extends AndroidViewModel {
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
                 topRatedMovieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
+                message.setValue("You are viewing Top Rated Movies");
             }
 
             @Override
@@ -92,6 +94,7 @@ public class MovieViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Movie>> loadFavoriteMovies() {
+        message.setValue("You are viewing your Favorite Movies");
         return mRepository.getFavoriteMovies();
     }
 }
