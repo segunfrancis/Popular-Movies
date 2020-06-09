@@ -34,12 +34,8 @@ public class MovieRepository {
         MovieRoomDatabase.databaseWriteExecutor.execute(() -> mMovieDao.insertFavoriteMovie(movie));
     }
 
-    void deleteFavoriteMovie(int movieId) {
-        mMovieDao.deleteFavoriteMovie(movieId);
-    }
-
-    LiveData<Movie> checkFavoriteMovie(int movieId) {
-        return mMovieDao.checkFavoriteMovie(movieId);
+    void deleteFavoriteMovie(Movie movie) {
+        mMovieDao.deleteFavoriteMovie(movie);
     }
 
     Call<MoviesResponse> loadPopularMovies(String apiKey) {

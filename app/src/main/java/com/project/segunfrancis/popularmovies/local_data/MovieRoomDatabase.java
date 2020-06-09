@@ -20,12 +20,13 @@ import static com.project.segunfrancis.popularmovies.util.AppConstants.NUMBER_OF
 public abstract class MovieRoomDatabase extends RoomDatabase {
     public abstract MovieDao mMovieDao();
 
+    private static final Object LOCK = new Object();
     private static volatile MovieRoomDatabase INSTANCE;
     static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     static MovieRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
-            synchronized (MovieRoomDatabase.class) {
+            synchronized (LOCK) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(
                             context.getApplicationContext(),

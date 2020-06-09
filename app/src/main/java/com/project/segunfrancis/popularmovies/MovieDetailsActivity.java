@@ -151,8 +151,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         mViewModel.insertFavoriteMovie(movie);
     }
 
-    private void removeMovieFromDatabase(int movieId) {
-        mViewModel.deleteFavoriteMovie(movieId);
+    private void removeMovieFromDatabase(Movie movie) {
+        mViewModel.deleteFavoriteMovie(movie);
     }
 
     @Override

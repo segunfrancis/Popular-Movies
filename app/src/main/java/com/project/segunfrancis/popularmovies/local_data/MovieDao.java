@@ -6,6 +6,7 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -21,9 +22,6 @@ public interface MovieDao {
     @Query("SELECT * from movie_table")
     LiveData<List<Movie>> getFavoriteMovies();
 
-    @Query("DELETE from movie_table where id is :movieId")
-    void deleteFavoriteMovie(int movieId);
-
-    @Query("SELECT * from movie_table where id is :movieId")
-    LiveData<Movie> checkFavoriteMovie(int movieId);
+    @Delete
+    void deleteFavoriteMovie(Movie movie);
 }
