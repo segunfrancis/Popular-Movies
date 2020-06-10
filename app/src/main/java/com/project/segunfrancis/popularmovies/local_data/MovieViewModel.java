@@ -26,6 +26,7 @@ import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 public class MovieViewModel extends AndroidViewModel {
     private MovieRepository mRepository;
     public MutableLiveData<List<Movie>> movieList = new MutableLiveData<>();
+    public LiveData<List<Movie>> favMovieList = new MutableLiveData<>();
 
     public MutableLiveData<State> mStateMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<String> message = new MutableLiveData<>();
@@ -90,18 +91,7 @@ public class MovieViewModel extends AndroidViewModel {
     }
 
     public void loadFavoriteMovies() {
-        mRepository.getFavoriteMovies().observeForever(new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(List<Movie> movies) {
-                if (movies.isEmpty()) {
-                    mStateMutableLiveData.setValue(State.EMPTY);
-                    movieList.setValue(movies);
-                } else {
-                    message.setValue("You are viewing your Favorite Movies");
-                    mStateMutableLiveData.setValue(State.SUCCESS);
-                    movieList.setValue(movies);
-                }
-            }
-        });
+        favMovieList = mRepository.getFavoriteMovies();
+        message.setValue("You are viewing your Favorite Movies");
     }
 }

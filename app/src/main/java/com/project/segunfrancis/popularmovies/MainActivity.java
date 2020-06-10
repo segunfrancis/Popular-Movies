@@ -27,6 +27,7 @@ import com.project.segunfrancis.popularmovies.model.Movie;
 import com.project.segunfrancis.popularmovies.util.State;
 
 import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KEY;
+import static com.project.segunfrancis.popularmovies.util.AppConstants.observeOnce;
 
 import java.io.IOException;
 import java.util.List;
@@ -178,12 +179,19 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
             }
         } else {
             mViewModel.loadFavoriteMovies();
-            observeMoviesList();
+            observeFavList();
         }
     }
 
     private void observeMoviesList() {
         mViewModel.movieList.observe(MainActivity.this, movies -> {
+            MoviePosterAdapter adapter = new MoviePosterAdapter(movies, MainActivity.this);
+            mRecyclerView.setAdapter(adapter);
+        });
+    }
+
+    private void observeFavList() {
+        observeOnce(mViewModel.favMovieList, movies -> {
             MoviePosterAdapter adapter = new MoviePosterAdapter(movies, MainActivity.this);
             mRecyclerView.setAdapter(adapter);
         });

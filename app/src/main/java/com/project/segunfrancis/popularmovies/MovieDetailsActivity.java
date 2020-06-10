@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -78,8 +79,19 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         moviePlot.setText(movie.getOverview());
         movieReleaseDate.setText(movie.getReleaseDate());
         movieRating.setText(String.valueOf(movie.getVoteAverage()));
+        Log.d("Favourite", "Favorite: " + movie.getFavorite());
+        if (movie.getFavorite()) {
+            fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
+        } else {
+            fab.setIcon(getResources().getDrawable(R.drawable.ic_star_border_24dp));
+        }
 
-        fab.setOnClickListener(view -> addMovieToDatabase(movie));
+        fab.setOnClickListener(view -> {
+            addMovieToFavorite(movie);
+            addMovieToDatabase(movie);
+            Log.d("Favourite", "Favorite at click: " + movie.getFavorite());
+        });
+
         /*mViewModel.checkFavoriteMovie(movie.getId()).observe(MovieDetailsActivity.this, new Observer<Movie>() {
             @Override
             public void onChanged(Movie singleMovie) {
@@ -153,6 +165,10 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
 
     private void removeMovieFromDatabase(Movie movie) {
         mViewModel.deleteFavoriteMovie(movie);
+    }
+
+    private void addMovieToFavorite(Movie movie) {
+        movie.setFavorite(true);
     }
 
     @Override
