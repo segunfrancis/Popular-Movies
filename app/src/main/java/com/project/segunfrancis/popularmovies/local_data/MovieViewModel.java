@@ -1,10 +1,10 @@
 package com.project.segunfrancis.popularmovies.local_data;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.project.segunfrancis.popularmovies.model.Movie;
 import com.project.segunfrancis.popularmovies.model.MoviesResponse;
+import com.project.segunfrancis.popularmovies.util.SingleLiveEvent;
 import com.project.segunfrancis.popularmovies.util.State;
 
 import java.util.List;
@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,7 +28,7 @@ public class MovieViewModel extends AndroidViewModel {
     public LiveData<List<Movie>> favMovieList = new MutableLiveData<>();
 
     public MutableLiveData<State> mStateMutableLiveData = new MutableLiveData<>();
-    public MutableLiveData<String> message = new MutableLiveData<>();
+    public SingleLiveEvent<String> message = new SingleLiveEvent<>();
 
     public MovieViewModel(@NonNull Application application) {
         super(application);
@@ -45,11 +44,6 @@ public class MovieViewModel extends AndroidViewModel {
     }
 
     public void loadPopularMovies() {
-        if (API_KEY.isEmpty()) {
-            mStateMutableLiveData.setValue(State.ERROR);
-            message.setValue("Obtain your API key");
-            return;
-        }
         mStateMutableLiveData.setValue(State.LOADING);
         mRepository.loadPopularMovies(API_KEY).enqueue(new Callback<MoviesResponse>() {
             @Override
@@ -68,11 +62,6 @@ public class MovieViewModel extends AndroidViewModel {
     }
 
     public void loadTopRatedMovies() {
-        if (API_KEY.isEmpty()) {
-            mStateMutableLiveData.setValue(State.ERROR);
-            message.setValue("Obtain your API key");
-            return;
-        }
         mStateMutableLiveData.setValue(State.LOADING);
         mRepository.loadTopRatedMovies(API_KEY).enqueue(new Callback<MoviesResponse>() {
             @Override
@@ -93,5 +82,6 @@ public class MovieViewModel extends AndroidViewModel {
     public void loadFavoriteMovies() {
         favMovieList = mRepository.getFavoriteMovies();
         message.setValue("You are viewing your Favorite Movies");
+        mStateMutableLiveData.setValue(State.SUCCESS);
     }
 }

@@ -88,6 +88,12 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
                     mProgressBar.setVisibility(View.GONE);
                     break;
                 }
+                default: {
+                    mEmptyFavoriteGroup.setVisibility(View.GONE);
+                    mNoInternetGroup.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.GONE);
+                    break;
+                }
             }
         });
 
@@ -126,18 +132,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        String[] values = getResources().getStringArray(R.array.sort_order_values);
-        String[] order = getResources().getStringArray(R.array.sort_order);
-        if (key.equals(getResources().getString(R.string.list_pref_key))) {
-            String prefValue = sharedPreferences.getString(key, values[0]);
-            if (prefValue.equals(values[0])) {
-                loadMovies();
-            } else if (prefValue.equals(values[1])) {
-                loadMovies();
-            } else {
-                loadMovies();
-            }
-        }
+        loadMovies();
     }
 
     private void displaySnackBar(String message) {
