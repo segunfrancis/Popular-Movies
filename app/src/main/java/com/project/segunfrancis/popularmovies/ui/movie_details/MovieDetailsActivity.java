@@ -43,7 +43,6 @@ import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KE
 import static com.project.segunfrancis.popularmovies.util.AppConstants.BACKDROP_BASE_URL;
 import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.YOUTUBE_BASE_URL;
-import static com.project.segunfrancis.popularmovies.util.AppConstants.observeOnce;
 
 public class MovieDetailsActivity extends AppCompatActivity implements TrailerRecyclerAdapter.OnItemClickListener,
         MovieReviewAdapter.OnItemClickListener {
