@@ -1,4 +1,4 @@
-package com.project.segunfrancis.popularmovies;
+package com.project.segunfrancis.popularmovies.ui.main;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,9 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.project.segunfrancis.popularmovies.R;
+import com.project.segunfrancis.popularmovies.ui.settings.SettingsActivity;
 import com.project.segunfrancis.popularmovies.adapter.MoviePosterAdapter;
-import com.project.segunfrancis.popularmovies.local_data.MovieViewModel;
+import com.project.segunfrancis.popularmovies.data_source.local.MovieViewModel;
 import com.project.segunfrancis.popularmovies.model.Movie;
+import com.project.segunfrancis.popularmovies.ui.movie_details.MovieDetailsActivity;
 import com.project.segunfrancis.popularmovies.util.State;
 
 import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KEY;
@@ -47,6 +50,12 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         setContentView(R.layout.activity_main);
 
         mViewModel = new ViewModelProvider(this).get(MovieViewModel.class);
+        mViewModel.message.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                displaySnackBar(s);
+            }
+        });
 
         mProgressBar = findViewById(R.id.progressBar);
         mRecyclerView = findViewById(R.id.movies_listRecyclerVIew);
@@ -96,8 +105,6 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
                 }
             }
         });
-
-        mViewModel.message.observe(this, this::displaySnackBar);
         mPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -186,9 +193,17 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     }
 
     private void observeFavList() {
+
         observeOnce(mViewModel.favMovieList, movies -> {
-            MoviePosterAdapter adapter = new MoviePosterAdapter(movies, MainActivity.this);
-            mRecyclerView.setAdapter(adapter);
+            if (movies.isEmpty()) {
+                MoviePosterAdapter adapter = new MoviePosterAdapter(movies, MainActivity.this);
+                mRecyclerView.setAdapter(adapter);
+                mViewModel.mStateMutableLiveData.setValue(State.EMPTY);
+            } else {
+                MoviePosterAdapter adapter = new MoviePosterAdapter(movies, MainActivity.this);
+                mRecyclerView.setAdapter(adapter);
+                mViewModel.mStateMutableLiveData.setValue(State.SUCCESS);
+            }
         });
     }
 

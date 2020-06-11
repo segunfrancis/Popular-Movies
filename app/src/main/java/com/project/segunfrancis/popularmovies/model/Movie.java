@@ -63,8 +63,6 @@ public class Movie implements Parcelable {
     @SerializedName("vote_average")
     private double mVoteAverage;
 
-    private boolean isFavorite = false;
-
     @Ignore
     @SerializedName("vote_count")
     private int mVoteCount;
@@ -85,7 +83,6 @@ public class Movie implements Parcelable {
         mVideo = tmpMVideo == 0 ? null : tmpMVideo == 1;
         mVoteAverage = in.readDouble();
         mVoteCount = in.readInt();
-        isFavorite = in.readBoolean();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -99,6 +96,10 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    @Ignore
+    public Movie() {
+    }
 
     public Boolean getAdult() {
         return mAdult;
@@ -164,14 +165,6 @@ public class Movie implements Parcelable {
         return mVoteCount;
     }
 
-    public boolean getFavorite() {
-        return isFavorite;
-    }
-
-    public void setFavorite(boolean isFavorite) {
-        this.isFavorite = isFavorite;
-    }
-
     @Ignore
     public Movie(Boolean adult, String backdropPath, List<Integer> genreIds, int id,
                  String originalLanguage, String originalTitle, String overview,
@@ -194,7 +187,7 @@ public class Movie implements Parcelable {
     }
 
     public Movie(String backdropPath, int id, String overview, String posterPath,
-                 String releaseDate, String title, double voteAverage, boolean isFavorite) {
+                 String releaseDate, String title, double voteAverage) {
         mBackdropPath = backdropPath;
         mId = id;
         mOverview = overview;
@@ -202,7 +195,6 @@ public class Movie implements Parcelable {
         mReleaseDate = releaseDate;
         mTitle = title;
         mVoteAverage = voteAverage;
-        this.isFavorite = isFavorite;
     }
 
     @Override
@@ -225,6 +217,5 @@ public class Movie implements Parcelable {
         parcel.writeByte((byte) (mVideo == null ? 0 : mVideo ? 1 : 2));
         parcel.writeDouble(mVoteAverage);
         parcel.writeInt(mVoteCount);
-        parcel.writeBoolean(isFavorite);
     }
 }

@@ -1,4 +1,4 @@
-package com.project.segunfrancis.popularmovies.local_data;
+package com.project.segunfrancis.popularmovies.data_source.local;
 
 import com.project.segunfrancis.popularmovies.model.Movie;
 
@@ -19,7 +19,7 @@ public interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFavoriteMovie(Movie movie);
 
-    @Query("SELECT * from movie_table")
+    @Query("SELECT * from movie_table ORDER BY id ASC")
     LiveData<List<Movie>> getFavoriteMovies();
 
     @Delete

@@ -4,9 +4,12 @@ import android.os.Handler;
 import android.os.Looper;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
+
+import static com.project.segunfrancis.popularmovies.util.AppConstants.NUMBER_OF_THREADS;
 
 /**
  * Created by SegunFrancis
@@ -16,11 +19,11 @@ public class MovieExecutors {
     // For singleton instantiation
     private final static Object LOCK = new Object();
     private static MovieExecutors sInstance;
-    private final Executor diskIO;
+    private final ExecutorService diskIO;
     private final Executor mainThread;
-    private final Executor networkIO;
+    private final ExecutorService networkIO;
 
-    private MovieExecutors(Executor diskIO, Executor networkIO, Executor mainThread) {
+    private MovieExecutors(ExecutorService diskIO, ExecutorService networkIO, Executor mainThread) {
         this.diskIO = diskIO;
         this.networkIO = networkIO;
         this.mainThread = mainThread;
@@ -29,7 +32,7 @@ public class MovieExecutors {
     public static MovieExecutors getInstance() {
         if (sInstance == null) {
             synchronized (LOCK) {
-                sInstance = new MovieExecutors(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(3), new MainThreadExecutor());
+                sInstance = new MovieExecutors(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(NUMBER_OF_THREADS), new MainThreadExecutor());
             }
         }
         return sInstance;

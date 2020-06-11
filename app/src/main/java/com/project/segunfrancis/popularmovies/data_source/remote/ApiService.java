@@ -1,4 +1,4 @@
-package com.project.segunfrancis.popularmovies.api;
+package com.project.segunfrancis.popularmovies.data_source.remote;
 
 import com.project.segunfrancis.popularmovies.model.MoviesResponse;
 import com.project.segunfrancis.popularmovies.model.ReviewResponse;

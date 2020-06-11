@@ -65,9 +65,6 @@ public class MoviePosterAdapter extends
 
     @Override
     public int getItemCount() {
-        /*if (moviesList.isEmpty())
-            return 0;
-        else*/
         return moviesList.size();
     }
 

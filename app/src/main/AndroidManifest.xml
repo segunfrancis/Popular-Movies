@@ -12,14 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SettingsActivity"
+            android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings_activity_label"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".ui.main.MainActivity" />
         <activity
-            android:name=".MovieDetailsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".ui.movie_details.MovieDetailsActivity"
+            android:parentActivityName=".ui.main.MainActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:launchMode="singleTop">
         <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

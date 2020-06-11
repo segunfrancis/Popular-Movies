@@ -1,7 +1,8 @@
-package com.project.segunfrancis.popularmovies.local_data;
+package com.project.segunfrancis.popularmovies.data_source.local;
 
 import android.app.Application;
 
+import com.project.segunfrancis.popularmovies.data_source.MovieRepository;
 import com.project.segunfrancis.popularmovies.model.Movie;
 import com.project.segunfrancis.popularmovies.model.MoviesResponse;
 import com.project.segunfrancis.popularmovies.util.SingleLiveEvent;
@@ -36,10 +37,12 @@ public class MovieViewModel extends AndroidViewModel {
     }
 
     public void insertFavoriteMovie(Movie movie) {
+        message.setValue("Added to favorite");
         mRepository.insertFavoriteMovie(movie);
     }
 
     public void deleteFavoriteMovie(Movie movie) {
+        message.setValue("Removed from favorite");
         mRepository.deleteFavoriteMovie(movie);
     }
 

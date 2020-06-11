@@ -1,4 +1,4 @@
-package com.project.segunfrancis.popularmovies;
+package com.project.segunfrancis.popularmovies.ui.settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 

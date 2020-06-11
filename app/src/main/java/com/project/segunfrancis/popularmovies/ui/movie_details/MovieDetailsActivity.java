@@ -1,17 +1,19 @@
-package com.project.segunfrancis.popularmovies;
+package com.project.segunfrancis.popularmovies.ui.movie_details;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,12 +22,13 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.project.segunfrancis.popularmovies.R;
 import com.project.segunfrancis.popularmovies.adapter.MarginItemDecoration;
 import com.project.segunfrancis.popularmovies.adapter.MovieReviewAdapter;
 import com.project.segunfrancis.popularmovies.adapter.TrailerRecyclerAdapter;
-import com.project.segunfrancis.popularmovies.api.ApiService;
-import com.project.segunfrancis.popularmovies.api.RetrofitClient;
-import com.project.segunfrancis.popularmovies.local_data.MovieViewModel;
+import com.project.segunfrancis.popularmovies.data_source.remote.ApiService;
+import com.project.segunfrancis.popularmovies.data_source.remote.RetrofitClient;
+import com.project.segunfrancis.popularmovies.data_source.local.MovieViewModel;
 import com.project.segunfrancis.popularmovies.model.Movie;
 import com.project.segunfrancis.popularmovies.model.ReviewResponse;
 import com.project.segunfrancis.popularmovies.model.ReviewResult;
@@ -35,10 +38,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import static com.project.segunfrancis.popularmovies.util.AppConstants.FAVORITE_PREF_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.INTENT_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.BACKDROP_BASE_URL;
 import static com.project.segunfrancis.popularmovies.util.ApiKey.API_KEY;
 import static com.project.segunfrancis.popularmovies.util.AppConstants.YOUTUBE_BASE_URL;
+import static com.project.segunfrancis.popularmovies.util.AppConstants.observeOnce;
 
 public class MovieDetailsActivity extends AppCompatActivity implements TrailerRecyclerAdapter.OnItemClickListener,
         MovieReviewAdapter.OnItemClickListener {
@@ -54,6 +59,12 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         setContentView(R.layout.activity_movie_details);
 
         mViewModel = new ViewModelProvider(this).get(MovieViewModel.class);
+        mViewModel.message.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                displaySnackBar(s);
+            }
+        });
 
         ImageView movieBackDrop = findViewById(R.id.backdrop_imageView);
         TextView movieTitle = findViewById(R.id.title_textView);
@@ -79,41 +90,33 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         moviePlot.setText(movie.getOverview());
         movieReleaseDate.setText(movie.getReleaseDate());
         movieRating.setText(String.valueOf(movie.getVoteAverage()));
-        Log.d("Favourite", "Favorite: " + movie.getFavorite());
-        if (movie.getFavorite()) {
+
+        SharedPreferences preferences = getSharedPreferences(FAVORITE_PREF_KEY, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        if (preferences.getBoolean(String.valueOf(movie.getId()), false)) {
+            // Already a favorite
             fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
+            fab.setIconTint(ColorStateList.valueOf(Color.rgb(255, 169, 0)));
         } else {
             fab.setIcon(getResources().getDrawable(R.drawable.ic_star_border_24dp));
         }
 
         fab.setOnClickListener(view -> {
-            addMovieToFavorite(movie);
-            addMovieToDatabase(movie);
-            Log.d("Favourite", "Favorite at click: " + movie.getFavorite());
-        });
-
-        /*mViewModel.checkFavoriteMovie(movie.getId()).observe(MovieDetailsActivity.this, new Observer<Movie>() {
-            @Override
-            public void onChanged(Movie singleMovie) {
-                if (singleMovie.getId() == movie.getId()) {
-                    // Movie is already a favorite
-                    fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
-                } else {
-                    fab.setIcon(getResources().getDrawable(R.drawable.ic_star_border_24dp));
-                }
-                fab.setOnClickListener(view -> {
-                    if (singleMovie.getId() == movie.getId()) {
-                        removeMovieFromDatabase(movie.getId());
-                        fab.setIcon(getResources().getDrawable(R.drawable.ic_star_border_24dp));
-                        Snackbar.make(mReviewRecyclerView, movie.getTitle() + " removed from favorites", Snackbar.LENGTH_LONG).show();
-                    } else {
-                        addMovieToDatabase(movie);
-                        fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
-                        Snackbar.make(mReviewRecyclerView, movie.getTitle() + " added to favorites", Snackbar.LENGTH_LONG).show();
-                    }
-                });
+            if (preferences.getBoolean(String.valueOf(movie.getId()), false)) {
+                // Already a favorite, remove from favorite
+                fab.setIcon(getResources().getDrawable(R.drawable.ic_star_border_24dp));
+                removeMovieFromDatabase(movie);
+                editor.putBoolean(String.valueOf(movie.getId()), false);
+                editor.apply();
+            } else {
+                // Add to favorite
+                fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
+                fab.setIconTint(ColorStateList.valueOf(Color.rgb(255, 169, 0)));
+                addMovieToDatabase(movie);
+                editor.putBoolean(String.valueOf(movie.getId()), true);
+                editor.apply();
             }
-        });*/
+        });
 
         // Create Retrofit client
         mService = RetrofitClient.getClient().create(ApiService.class);
@@ -167,8 +170,8 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         mViewModel.deleteFavoriteMovie(movie);
     }
 
-    private void addMovieToFavorite(Movie movie) {
-        movie.setFavorite(true);
+    private void displaySnackBar(String message) {
+        Snackbar.make(findViewById(R.id.details_coordinator_layout), message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.project.segunfrancis.popularmovies.api;
+package com.project.segunfrancis.popularmovies.data_source.remote;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

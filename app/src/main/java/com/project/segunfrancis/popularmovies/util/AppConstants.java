@@ -12,7 +12,8 @@ public class AppConstants {
     public final static String BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w780";
     public final static String INTENT_KEY = "main_activity_to_second_activity_intent_key";
     public final static String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
-    public final static int NUMBER_OF_THREADS = 4;
+    public final static String FAVORITE_PREF_KEY = "com.project.segunfrancis.popularmovies.fav_pref_key";
+    public final static int NUMBER_OF_THREADS = 3;
 
     /**
      * [LiveData] observer that observes once and removes observer
