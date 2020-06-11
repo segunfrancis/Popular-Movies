@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mViewModel = new ViewModelProvider(this).get(MovieViewModel.class);
         mViewModel.message.observe(this, new Observer<String>() {
             @Override
@@ -67,7 +68,17 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         mProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        loadMovies();
+        mViewModel.hasLoaded.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (!aBoolean) {
+                    loadMovies();
+                    observeMoviesList();
+                } else {
+                    observeMoviesList();
+                }
+            }
+        });
 
         retryText.setOnClickListener(v -> loadMovies());
 
@@ -161,12 +172,11 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     private void loadMovies() {
         String[] prefValues = getResources().getStringArray(R.array.sort_order_values);
         String[] pref = getResources().getStringArray(R.array.sort_order);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String listPrefValue = mPreferences.getString(getResources().getString(R.string.list_pref_key), prefValues[0]);
         if (listPrefValue.equals(prefValues[0])) {
             if (isConnectionAvailable()) {
                 mViewModel.loadPopularMovies();
-                observeMoviesList();
+                //observeMoviesList();
             } else {
                 mNoInternetGroup.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.GONE);
@@ -174,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
         } else if (listPrefValue.equals(prefValues[1])) {
             if (isConnectionAvailable()) {
                 mViewModel.loadTopRatedMovies();
-                observeMoviesList();
+                //observeMoviesList();
             } else {
                 mNoInternetGroup.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.GONE);

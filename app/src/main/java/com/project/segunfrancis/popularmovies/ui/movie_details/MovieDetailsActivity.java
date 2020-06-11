@@ -96,7 +96,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         if (preferences.getBoolean(String.valueOf(movie.getId()), false)) {
             // Already a favorite
             fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
-            fab.setIconTint(ColorStateList.valueOf(Color.rgb(255, 169, 0)));
         } else {
             fab.setIcon(getResources().getDrawable(R.drawable.ic_star_border_24dp));
         }
@@ -111,7 +110,6 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
             } else {
                 // Add to favorite
                 fab.setIcon(getResources().getDrawable(R.drawable.ic_star_24dp));
-                fab.setIconTint(ColorStateList.valueOf(Color.rgb(255, 169, 0)));
                 addMovieToDatabase(movie);
                 editor.putBoolean(String.valueOf(movie.getId()), true);
                 editor.apply();

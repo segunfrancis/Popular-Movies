@@ -31,6 +31,8 @@ public class MovieViewModel extends AndroidViewModel {
     public MutableLiveData<State> mStateMutableLiveData = new MutableLiveData<>();
     public SingleLiveEvent<String> message = new SingleLiveEvent<>();
 
+    public MutableLiveData<Boolean> hasLoaded = new MutableLiveData<>(false);
+
     public MovieViewModel(@NonNull Application application) {
         super(application);
         mRepository = new MovieRepository(application);
@@ -54,6 +56,7 @@ public class MovieViewModel extends AndroidViewModel {
                 movieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
                 message.setValue("You are viewing Popular Movies");
+                hasLoaded.setValue(true);
             }
 
             @Override
@@ -72,6 +75,7 @@ public class MovieViewModel extends AndroidViewModel {
                 movieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
                 message.setValue("You are viewing Top Rated Movies");
+                hasLoaded.setValue(true);
             }
 
             @Override
