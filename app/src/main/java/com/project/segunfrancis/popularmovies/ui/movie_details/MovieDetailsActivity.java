@@ -2,9 +2,7 @@ package com.project.segunfrancis.popularmovies.ui.movie_details;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -12,11 +10,8 @@ import retrofit2.Response;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -58,12 +53,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
         setContentView(R.layout.activity_movie_details);
 
         mViewModel = new ViewModelProvider(this).get(MovieViewModel.class);
-        mViewModel.message.observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                displaySnackBar(s);
-            }
-        });
+        mViewModel.message.observe(this, this::displaySnackBar);
 
         ImageView movieBackDrop = findViewById(R.id.backdrop_imageView);
         TextView movieTitle = findViewById(R.id.title_textView);
@@ -136,7 +126,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
 
             @Override
             public void onFailure(@NonNull Call<TrailerResponse> call, @NonNull Throwable t) {
-                Snackbar.make(mTrailerRecyclerView, "Could not load Trailers", Snackbar.LENGTH_LONG).show();
+                displaySnackBar(getResources().getString(R.string.trailers_loading_error));
             }
         });
     }
@@ -154,7 +144,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements TrailerRe
 
             @Override
             public void onFailure(@NonNull Call<ReviewResponse> call, @NonNull Throwable t) {
-                Snackbar.make(mTrailerRecyclerView, "Could not load Reviews", Snackbar.LENGTH_LONG).show();
+                displaySnackBar(getResources().getString(R.string.reviews_loading_error));
             }
         });
     }

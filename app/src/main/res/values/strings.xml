@@ -25,11 +25,21 @@
     <string name="no_internet">image displaying no internet</string>
     <string name="backdrop_image_description">movie backdrop image</string>
     <string name="poster_image_description">movie poster</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="youtube_image">Youtube image</string>
+    <string name="empty_list_image">Empty favourite list image</string>
+
+    <!-- Error messages -->
+    <string name="reviews_loading_error">Could not load Reviews</string>
+    <string name="trailers_loading_error">Could not load Trailers</string>
+
+    <!-- Others -->
     <string name="movie_trailers">Trailers:</string>
     <string name="movie_reviews">Reviews:</string>
     <string name="read_more_text">Read More</string>
     <string name="empty_favorite_list">Your favourite list is empty</string>
-    <string name="empty_list_image">Empty favourite list image</string>
+    <string name="added_to_favorite">Added to favorite</string>
+    <string name="removed_from_favorite">Removed from favorite</string>
+    <string name="top_rated_message">You are viewing Top Rated Movies</string>
+    <string name="popular_message">You are viewing Popular Movies</string>
+    <string name="favorite_message">You are viewing your Favorite Movies</string>
 </resources>

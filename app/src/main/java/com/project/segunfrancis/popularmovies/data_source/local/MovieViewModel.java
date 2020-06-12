@@ -2,9 +2,11 @@ package com.project.segunfrancis.popularmovies.data_source.local;
 
 import android.app.Application;
 
+import com.project.segunfrancis.popularmovies.R;
 import com.project.segunfrancis.popularmovies.data_source.MovieRepository;
 import com.project.segunfrancis.popularmovies.model.Movie;
 import com.project.segunfrancis.popularmovies.model.MoviesResponse;
+import com.project.segunfrancis.popularmovies.util.LoadState;
 import com.project.segunfrancis.popularmovies.util.SingleLiveEvent;
 import com.project.segunfrancis.popularmovies.util.State;
 
@@ -31,7 +33,7 @@ public class MovieViewModel extends AndroidViewModel {
     public MutableLiveData<State> mStateMutableLiveData = new MutableLiveData<>();
     public SingleLiveEvent<String> message = new SingleLiveEvent<>();
 
-    public MutableLiveData<Boolean> hasLoaded = new MutableLiveData<>(false);
+    public MutableLiveData<LoadState> loadState = new MutableLiveData<>(LoadState.HAS_NOT_LOADED);
 
     public MovieViewModel(@NonNull Application application) {
         super(application);
@@ -39,12 +41,12 @@ public class MovieViewModel extends AndroidViewModel {
     }
 
     public void insertFavoriteMovie(Movie movie) {
-        message.setValue("Added to favorite");
+        message.setValue(getApplication().getResources().getString(R.string.added_to_favorite));
         mRepository.insertFavoriteMovie(movie);
     }
 
     public void deleteFavoriteMovie(Movie movie) {
-        message.setValue("Removed from favorite");
+        message.setValue(getApplication().getResources().getString(R.string.removed_from_favorite));
         mRepository.deleteFavoriteMovie(movie);
     }
 
@@ -55,14 +57,15 @@ public class MovieViewModel extends AndroidViewModel {
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
                 movieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
-                message.setValue("You are viewing Popular Movies");
-                hasLoaded.setValue(true);
+                message.setValue(getApplication().getResources().getString(R.string.popular_message));
+                loadState.setValue(LoadState.HAS_LOADED);
             }
 
             @Override
             public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
                 mStateMutableLiveData.setValue(State.ERROR);
                 message.setValue(t.getLocalizedMessage());
+                loadState.setValue(LoadState.HAS_NOT_LOADED);
             }
         });
     }
@@ -74,21 +77,23 @@ public class MovieViewModel extends AndroidViewModel {
             public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
                 movieList.setValue(response.body().getResults());
                 mStateMutableLiveData.setValue(State.SUCCESS);
-                message.setValue("You are viewing Top Rated Movies");
-                hasLoaded.setValue(true);
+                message.setValue(getApplication().getResources().getString(R.string.top_rated_message));
+                loadState.setValue(LoadState.HAS_LOADED);
             }
 
             @Override
             public void onFailure(@NonNull Call<MoviesResponse> call, @NonNull Throwable t) {
                 mStateMutableLiveData.setValue(State.ERROR);
                 message.setValue(t.getLocalizedMessage());
+                loadState.setValue(LoadState.HAS_NOT_LOADED);
             }
         });
     }
 
     public void loadFavoriteMovies() {
         favMovieList = mRepository.getFavoriteMovies();
-        message.setValue("You are viewing your Favorite Movies");
+        message.setValue(getApplication().getResources().getString(R.string.favorite_message));
         mStateMutableLiveData.setValue(State.SUCCESS);
+        loadState.setValue(LoadState.HAS_LOADED_FAVORITES);
     }
 }
