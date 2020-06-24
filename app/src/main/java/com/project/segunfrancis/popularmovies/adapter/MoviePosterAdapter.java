@@ -44,7 +44,7 @@ public class MoviePosterAdapter extends
                     .placeholder(R.drawable.loading_animation)
                     .error(R.drawable.ic_broken_image_24dp)
                     .into(posterImage);
-            itemView.setOnClickListener(v -> listener.onItemClick(result, getLayoutPosition()));
+            itemView.setOnClickListener(v -> listener.onItemClick(result, posterImage));
         }
     }
 
@@ -67,6 +67,6 @@ public class MoviePosterAdapter extends
     }
 
     public interface OnItemClickListener {
-        void onItemClick(Movie result, int position);
+        void onItemClick(Movie result, ImageView imageView);
     }
 }

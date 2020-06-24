@@ -3,6 +3,7 @@ package com.project.segunfrancis.popularmovies.ui.main;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -16,6 +17,7 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
             }
         });
 
-                retryText.setOnClickListener(v -> loadMovies());
+        retryText.setOnClickListener(v -> loadMovies());
 
         mViewModel.mStateMutableLiveData.observe(this, state -> {
             switch (state) {
@@ -120,11 +122,18 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
     }
 
     @Override
-    public void onItemClick(Movie result, int position) {
-        startActivity(
-                new Intent(MainActivity.this, MovieDetailsActivity.class)
-                        .putExtra(INTENT_KEY, result)
-        );
+    public void onItemClick(Movie result, ImageView imageView) {
+        Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class)
+                .putExtra(INTENT_KEY, result);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    MainActivity.this,
+                    imageView,
+                    imageView.getTransitionName()
+            ).toBundle();
+            startActivity(intent, bundle);
+        } else
+            startActivity(intent);
     }
 
     @Override
@@ -184,7 +193,6 @@ public class MainActivity extends AppCompatActivity implements MoviePosterAdapte
             }
         } else {
             mViewModel.loadFavoriteMovies();
-            //observeFavList();
         }
     }
 
